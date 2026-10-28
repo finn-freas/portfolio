@@ -93,8 +93,10 @@ section + section { margin-top: 56px; }
 .highlight { font: 500 13px/1.4 var(--f-head); color: var(--green); }
 .project-desc { margin: 0 0 12px; font-size: 18px; line-height: 1.65; color: var(--dim); }
 .foot { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
-.tech { display: flex; flex-wrap: wrap; gap: 6px; }
-.pill { display: inline-block; font: 400 13px/1.5 var(--f-head); color: #b9bac4; background: var(--pill); padding: 3px 10px; border-radius: 4px; }
+.tech { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.pill { display: inline-block; font: 400 13.5px/1.6 var(--f-mono); color: #cfcdd6; white-space: nowrap; }
+.pill::before { content: "["; color: var(--faint); margin-right: 3px; }
+.pill::after { content: "]"; color: var(--faint); margin-left: 3px; }
 .links { display: flex; gap: 16px; font: 400 14px/1.6 var(--f-head); }
 .links a { color: var(--dim); text-decoration-color: var(--line); }
 .links a:hover { color: var(--ink); text-decoration-color: var(--ink); }
