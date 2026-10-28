@@ -37,7 +37,7 @@ body { background: var(--night); color: var(--body); font: 400 19px/1.75 var(--f
 #sky { z-index: 0; }
 #fx { z-index: 6; pointer-events: none; }
 .site {
-  position: relative; z-index: 2; max-width: 1200px; margin: 0 auto;
+  position: relative; z-index: 2; max-width: none; margin: 0 auto;
   padding-left: max(24px, env(safe-area-inset-left, 0px));
   padding-right: max(24px, env(safe-area-inset-right, 0px));
   padding-block: 0 40px;
@@ -140,7 +140,9 @@ section + section { margin-top: 56px; }
 /* desktop: use the full width */
 .hero { display: flex; flex-direction: column; }
 @media (min-width: 1000px) {
-  .site { padding-left: max(48px, env(safe-area-inset-left, 0px)); padding-right: max(48px, env(safe-area-inset-right, 0px)); }
+  .site { padding-left: max(4vw, env(safe-area-inset-left, 0px)); padding-right: max(4vw, env(safe-area-inset-right, 0px)); }
+  .tagline { max-width: 62ch; }
+  .project-desc { max-width: 70ch; }
   .hero { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 56px; align-items: center; }
   .hero .demo { margin-top: 0; }
   .tagline { font-size: 20px; }
