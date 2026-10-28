@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a0b10'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='18' text-anchor='middle' fill='%23ffd06a'%3E*%3C/text%3E%3C/svg%3E">
+<title>Finn Freas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Finn Freas — electrical and computer engineering student at Northeastern. FPGA neural-network hardware, race-car firmware, computer vision.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Type: Space Grotesk for names, headings and menu; Crimson Pro for reading; JetBrains Mono for small labels and the ASCII scene.
+   Layout: one narrow 720px column, four views (home, projects, experience, skills) behind a simple top menu.
+   Single deliberate dark look over a faint text starfield, so no light theme. */
+:root {
+  color-scheme: dark;
+  --night: #0a0b10;
+  --pill: #161925;
+  --line: #30333f;
+  --ink: #ebe8e1;
+  --body: #d4d1ca;
+  --dim: #9c9ba5;
+  --faint: #6d6e79;
+  --gold: #d9b26f;
+  --green: #6be39a;
+  --f-head: "Space Grotesk", -apple-system, system-ui, sans-serif;
+  --f-body: "Crimson Pro", Georgia, "Times New Roman", serif;
+  --f-mono: "JetBrains Mono", "Fira Code", Consolas, monospace;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { background: var(--night); }
+body { background: var(--night); color: var(--body); font: 400 19px/1.75 var(--f-body); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+#sky, #fx { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+#sky { z-index: 0; }
+#fx { z-index: 6; pointer-events: none; }
+.site {
+  position: relative; z-index: 2; max-width: 720px; margin: 0 auto;
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  padding-block: 0 40px;
+}
+a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--faint); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--ink); }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+/* nav */
+.nav { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px 20px; padding-block: 28px; border-bottom: 5px solid var(--line); margin-bottom: 48px; }
+.nav-name { font: 700 20px/1 var(--f-head); color: var(--ink); text-decoration: none; }
+.nav-links { display: flex; flex-wrap: wrap; gap: 6px 20px; }
+.nav-links a { font: 400 15px/1 var(--f-head); color: var(--dim); text-decoration: none; padding: 4px 0; border-bottom: 2px solid transparent; }
+.nav-links a:hover { color: var(--ink); border-bottom-color: var(--line); }
+.nav-links a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--gold); }
+
+h1 { margin: 0 0 12px; font: 700 34px/1.25 var(--f-head); color: var(--ink); letter-spacing: -0.01em; }
+.section-heading { margin: 0 0 18px; font: 500 14px/1.4 var(--f-head); color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; }
+section + section { margin-top: 56px; }
+
+/* home */
+.header-row { display: flex; align-items: center; gap: 24px; margin-bottom: 18px; }
+.header-row h1 { margin: 0; }
+.profile-photo { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; border: 2px solid var(--line); flex: none; max-width: 100%; }
+.status { display: flex; align-items: center; gap: 10px; font: 400 13px/1.4 var(--f-mono); color: var(--dim); margin-bottom: 14px; }
+.status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 7px var(--green); flex: none; }
+.tagline { margin: 0 0 16px; font-size: 19px; line-height: 1.7; color: var(--body); }
+.header-links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font: 400 15px/1.4 var(--f-head); }
+.header-links a { color: var(--dim); text-decoration-color: var(--line); }
+.header-links a:hover { color: var(--ink); text-decoration-color: var(--ink); }
+.header-links .sep { color: var(--faint); }
+
+.demo { margin: 40px 0 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #000; }
+.slot { position: relative; aspect-ratio: 16 / 10; max-width: 100%; }
+.stage { position: absolute; inset: 0; overflow: hidden; cursor: crosshair; background: #000; }
+.stage canvas, .stage .ascii { position: absolute; inset: 0; width: 100%; height: 100%; }
+.stage .ascii { overflow: hidden; pointer-events: none; }
+.art-caption { margin: 10px 0 0; font: 400 14px/1.4 var(--f-mono); color: var(--faint); text-align: center; }
+.art-caption small { display: block; margin-top: 4px; font-size: 12px; color: #55565f; }
+
+.contact p { margin: 0 0 14px; }
+.mail { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.addr { font: 500 20px/1.3 var(--f-head); color: var(--ink); user-select: all; word-break: break-all; }
+.btn { appearance: none; border: 1px solid var(--line); background: none; color: var(--dim); font: 400 13px/1 var(--f-head); padding: 8px 12px; border-radius: 4px; cursor: pointer; }
+.btn:hover { color: var(--ink); border-color: var(--faint); }
+.copied { font: 400 13px/1 var(--f-head); color: var(--green); }
+
+/* entries (projects + experience) */
+.entry { margin-bottom: 36px; padding-bottom: 36px; border-bottom: 4px solid var(--line); }
+.entry:last-child { border-bottom: 0; margin-bottom: 0; padding-bottom: 0; }
+.project-header { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; margin-bottom: 6px; }
+.project-title { margin: 0; font: 600 21px/1.35 var(--f-head); color: var(--ink); }
+.highlight { font: 500 13px/1.4 var(--f-head); color: var(--green); }
+.project-desc { margin: 0 0 12px; font-size: 18px; line-height: 1.65; color: var(--dim); }
+.foot { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+.tech { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill { display: inline-block; font: 400 13px/1.5 var(--f-head); color: #b9bac4; background: var(--pill); padding: 3px 10px; border-radius: 4px; }
+.links { display: flex; gap: 16px; font: 400 14px/1.6 var(--f-head); }
+.links a { color: var(--dim); text-decoration-color: var(--line); }
+.links a:hover { color: var(--ink); text-decoration-color: var(--ink); }
+
+.cmdline { display: flex; align-items: stretch; margin-top: 14px; border: 1px solid var(--line); border-radius: 6px; background: #000; min-width: 0; }
+.cmdline .cmd { flex: 1; min-width: 0; font: 400 13px/1.5 var(--f-mono); color: var(--ink); padding: 9px 12px; overflow-x: auto; white-space: nowrap; text-decoration: none; }
+.cmdline .cmd::before { content: "$ "; color: var(--green); }
+.cmdline .cmd:hover { color: #fff; text-decoration: underline; text-decoration-color: var(--faint); }
+.cmdline .cp { appearance: none; border: 0; border-left: 1px solid var(--line); background: none; color: var(--dim); font: 400 12px/1 var(--f-mono); padding: 0 12px; cursor: pointer; }
+.cmdline .cp:hover { color: var(--ink); }
+.poster { appearance: none; padding: 0; margin: 4px 0 14px; background: #000; border: 1px solid var(--line); border-radius: 6px; cursor: zoom-in; width: min(360px, 100%); position: relative; overflow: hidden; display: block; }
+.poster img { display: block; width: 100%; height: auto; max-width: 100%; }
+.poster span { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 10px; font: 400 13px/1 var(--f-head); color: var(--ink); background: linear-gradient(transparent, rgba(0,0,0,0.85)); text-align: left; }
+.poster:hover { border-color: var(--faint); }
+.lightbox { position: fixed; inset: 0; z-index: 20; background: rgba(5, 6, 10, 0.94); display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); cursor: zoom-out; }
+.lightbox figure { margin: 0; display: flex; flex-direction: column; gap: 10px; max-width: min(1100px, 100%); }
+.lightbox img { width: 100%; height: auto; max-height: 82vh; object-fit: contain; background: #fff; }
+.lightbox figcaption { font: 400 14px/1.4 var(--f-head); color: var(--dim); }
+.lb-close { position: absolute; top: max(16px, env(safe-area-inset-top, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); appearance: none; background: none; border: 1px solid var(--line); color: var(--ink); font: 400 13px/1 var(--f-head); padding: 9px 12px; border-radius: 4px; cursor: pointer; }
+
+.entry-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 10px; }
+.entry-title { flex: 1; min-width: 0; }
+.entry-title h3 { margin: 0 0 2px; font: 600 19px/1.4 var(--f-head); color: var(--ink); }
+.entry-org { display: block; font: 400 15px/1.5 var(--f-head); color: var(--dim); }
+.entry-date { font: 400 14px/1.6 var(--f-head); color: var(--faint); white-space: nowrap; text-align: right; }
+.entry-date small { display: block; font-size: 13px; }
+.entry-list { margin: 0 0 12px; padding-left: 20px; }
+.entry-list li { margin-bottom: 6px; font-size: 17.5px; line-height: 1.65; color: var(--body); }
+.entry-list li::marker { color: var(--faint); }
+
+/* skills */
+.skill-group { margin-bottom: 26px; }
+.skill-group h3 { margin: 0 0 8px; font: 600 16px/1.4 var(--f-head); color: var(--ink); }
+.awards { margin: 0; padding-left: 20px; }
+.awards li { margin-bottom: 6px; font-size: 18px; }
+.awards li::marker { color: var(--gold); }
+
+.footer { margin-top: 80px; padding-top: 24px; border-top: 4px solid var(--line); text-align: center; font: 400 13px/1.5 var(--f-head); color: var(--faint); }
+
+@media (max-width: 600px) {
+  body { font-size: 18px; }
+  .site { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .nav { padding-block: 20px; margin-bottom: 36px; }
+  .nav-links { gap: 6px 14px; }
+  .nav-links a { font-size: 14px; }
+  h1 { font-size: 30px; }
+  .entry-header { flex-direction: column; gap: 2px; }
+  .entry-date { text-align: left; }
+  .entry-date small { display: inline; margin-left: 6px; }
+  .foot { flex-direction: column; }
+  .slot { aspect-ratio: 4 / 3; }
+  .profile-photo { width: 88px; height: 88px; }
+  .header-row { gap: 16px; }
+}
+</style>
+<style>html, body { margin: 0; } img { max-width: 100%; }</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<div class="site">
+  <nav class="nav" aria-label="Main navigation">
+    <a href="#home" class="nav-name">Finn Freas</a>
+    <div class="nav-links">
+      <a href="#home" data-nav="home">~/</a>
+      <a href="#projects" data-nav="projects">Projects</a>
+      <a href="#experience" data-nav="experience">Experience</a>
+      <a href="#skills" data-nav="skills">Skills</a>
+      <a href="https://github.com/finn-freas" target="_blank" rel="noopener">GitHub ↗</a>
+      <a href="https://www.linkedin.com/in/finn-freas-a7445036b/" target="_blank" rel="noopener">LinkedIn ↗</a>
+    </div>
+  </nav>
+
+  <!-- ================= HOME ================= -->
+  <main data-view="home">
+    <section>
+      <div class="header-row">
+        <img class="profile-photo" src="finn-photo.jpg" alt="Finn Freas" width="200" height="200">
+        <div>
+          <div class="status">now: firmware, Northeastern Electric Racing</div>
+          <h1>Finn Freas</h1>
+        </div>
+      </div>
+      <p class="tagline">Electrical &amp; Computer Engineering at Northeastern (Honors). Firmware for Northeastern Electric Racing. Previously ML research at Uniformed Services University and computer vision at the Department of Defense. Currently working on optimizing FPGA hardware for deploying neural networks.</p>
+      <figure class="demo" aria-label="A 3D planet scene drawn in text characters. Click it to set off an explosion.">
+        <div class="slot">
+          <div class="stage" id="stage">
+            <canvas id="stage-stars" aria-hidden="true"></canvas>
+            <div class="ascii" id="ascii" aria-hidden="true"></div>
+            <canvas id="stage-fx" aria-hidden="true"></canvas>
+          </div>
+        </div>
+      </figure>
+      <p class="art-caption">(some cool artwork I made)<small>try clicking on it</small></p>
+    </section>
+
+    <section class="contact" id="contact">
+      <h2 class="section-heading">Get in touch</h2>
+      <p>I'm looking for summer 2027 internships in FPGA design, ML hardware and computer engineering. Email me any time.</p>
+      <div class="mail">
+        <span class="addr" id="addr">finn.freas@gmail.com</span>
+        <button class="btn" id="copy-mail" type="button">Copy email</button>
+        <span class="copied" id="copied" role="status"></span>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= PROJECTS ================= -->
+  <main data-view="projects" hidden>
+    <h1>Projects</h1>
+    <section style="margin-top:32px">
+      <div class="entry">
+        <div class="project-header"><h3 class="project-title">INT8 Neural-Network Chip on a $50 FPGA</h3></div>
+        <p class="project-desc">An INT8 neural-network accelerator and compiler I designed, running the MLPerf Tiny person-detection model on a Tang Nano 20K FPGA. Its output matches TFLite's int8 results exactly on every tested image.</p>
+        <div class="foot">
+          <div class="tech"><span class="pill">SystemVerilog</span><span class="pill">Python</span><span class="pill">Yosys</span><span class="pill">Verilator</span></div>
+        </div>
+        <div class="cmdline"><a class="cmd" href="https://github.com/finn-freas/deployed-cnn-fpga" target="_blank" rel="noopener">git clone https://github.com/finn-freas/deployed-cnn-fpga</a><button type="button" class="cp" data-copy="git clone https://github.com/finn-freas/deployed-cnn-fpga">copy</button></div>
+      </div>
+
+      <div class="entry">
+        <div class="project-header"><h3 class="project-title">Calculator-to-Radio Long-Range Module</h3><span class="highlight">TI Codes top 10</span></div>
+        <p class="project-desc">Long-range wireless messaging on a TI graphing calculator. Software in Assembly and Python drives a radio module over UART, inside a 3D-printed case.</p>
+        <div class="foot">
+          <div class="tech"><span class="pill">Assembly</span><span class="pill">Python</span><span class="pill">UART</span><span class="pill">Fusion 360</span></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="project-header"><h3 class="project-title">Line-Following Rover with Robotic Arm</h3><span class="highlight">TI Codes top 10</span></div>
+        <p class="project-desc">Led a team of 5. I designed the robotic arm in Fusion 360 and programmed the autonomous line-following rover to transport paper between locations.</p>
+        <div class="foot">
+          <div class="tech"><span class="pill">Python</span><span class="pill">C++</span><span class="pill">Servo control</span><span class="pill">Fusion 360</span></div>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="project-header"><h3 class="project-title">Trash Detection</h3></div>
+        <p class="project-desc">A YOLOv5 model trained to find trash and litter in photos of streets, parks and beaches, with augmentation for rotation, shear, color and noise.</p>
+        <div class="foot">
+          <div class="tech"><span class="pill">Python</span><span class="pill">PyTorch</span><span class="pill">YOLOv5</span></div>
+        </div>
+        <div class="cmdline"><a class="cmd" href="https://github.com/finn-freas/Trash_Detection" target="_blank" rel="noopener">git clone https://github.com/finn-freas/Trash_Detection</a><button type="button" class="cp" data-copy="git clone https://github.com/finn-freas/Trash_Detection">copy</button></div>
+      </div>
+
+      <div class="entry">
+        <div class="project-header"><h3 class="project-title">CyberPatriot Hardening Script</h3></div>
+        <p class="project-desc">A Bash script that locks down an Ubuntu machine for the CyberPatriot competition: firewall, Fail2Ban, malware scan, audit logging, SSH lockdown and password policy.</p>
+        <div class="foot">
+          <div class="tech"><span class="pill">Bash</span><span class="pill">Ubuntu</span></div>
+        </div>
+        <div class="cmdline"><a class="cmd" href="https://github.com/finn-freas/CyberPatriot-Hardening" target="_blank" rel="noopener">git clone https://github.com/finn-freas/CyberPatriot-Hardening</a><button type="button" class="cp" data-copy="git clone https://github.com/finn-freas/CyberPatriot-Hardening">copy</button></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= EXPERIENCE ================= -->
+  <main data-view="experience" hidden>
+    <h1>Experience</h1>
+    <section style="margin-top:32px">
+      <h2 class="section-heading">Work &amp; Research</h2>
+      <div class="entry">
+        <div class="entry-header">
+          <div class="entry-title"><h3>Firmware Programmer</h3><span class="entry-org">Northeastern Electric Racing (Formula SAE)</span></div>
+          <span class="entry-date">Aug 2026 – Present<small>Boston, MA</small></span>
+        </div>
+        <ul class="entry-list">
+          <li>Develop telemetry software in Rust and C++ for an electric race car, taking in real-time CAN bus data from the battery management system, motor controller and sensor boards over MQTT.</li>
+          <li>Write CAN message decoders that map raw frames to typed Rust structs from JSON message definitions.</li>
+          <li>Implemented packet validation and dropped-frame detection with unit and integration tests. Debug live telemetry faults on test days with the electrical and firmware subteams.</li>
+        </ul>
+        <div class="tech"><span class="pill">Rust</span><span class="pill">C++</span><span class="pill">CAN bus</span><span class="pill">MQTT</span></div>
+      </div>
+      <div class="entry">
+        <div class="entry-header">
+          <div class="entry-title"><h3>Machine Learning Research Intern</h3><span class="entry-org">Uniformed Services University</span></div>
+          <span class="entry-date">Jun 2026 – Aug 2026<small>Bethesda, MD</small></span>
+        </div>
+        <ul class="entry-list">
+          <li>Selected as 1 of 10 high school interns from about 1,000 high school and undergraduate applicants.</li>
+          <li>Built an end-to-end MRI processing pipeline for 53 patient scans from four hospitals, and trained deep learning models to detect and measure multiple sclerosis lesions.</li>
+          <li>Showed that a leading image standardization method reduced detection accuracy, traced the cause to a flaw in its source code, and designed a correction that improved accuracy about 12%.</li>
+          <li>First author on the poster “The Effect of Retrospective Image Harmonization on Multi-Center Multiple Sclerosis Lesion Segmentation,” with researchers from Johns Hopkins and Vanderbilt.</li>
+        </ul>
+        <button class="poster" type="button" id="poster-open" aria-label="View the research poster larger">
+          <img src="ms-lesion-poster.jpg" alt="Research poster: The Effect of Retrospective Image Harmonization on Multi-Center Multiple Sclerosis Lesion Segmentation" width="480" height="360" loading="lazy">
+          <span>View poster ↗</span>
+        </button>
+        <div class="tech"><span class="pill">Python</span><span class="pill">PyTorch</span><span class="pill">MRI</span></div>
+      </div>
+      <div class="entry">
+        <div class="entry-header">
+          <div class="entry-title"><h3>Machine Learning Development Intern</h3><span class="entry-org">Department of Defense</span></div>
+          <span class="entry-date">May 2025 – Aug 2025<small>Aberdeen Proving Ground, MD</small></span>
+        </div>
+        <ul class="entry-list">
+          <li>Selected as one of only three high school interns from approximately 100 applicants for a paid summer internship.</li>
+          <li>Developed a computer vision pipeline by training a Mask R-CNN instance segmentation model on 2,200+ annotated images to identify chemical spill regions.</li>
+          <li>Developed a ResNet-based classifier that incorporates segmentation data to improve spill classification accuracy.</li>
+          <li>Presented research progress and technical findings in weekly briefings to more than 20 Army scientists and engineers.</li>
+          <li>Deployed the trained PyTorch model to an NVIDIA Jetson Orin for real-time detection on a live camera feed, converting it to TensorRT and writing a C++ inference script that skipped frames and blended masks between consecutive detections to stabilize output.</li>
+          <li>Co-authored and published a technical report in the U.S. Army research database documenting the project's methodology and results.</li>
+        </ul>
+        <div class="tech"><span class="pill">PyTorch</span><span class="pill">Mask R-CNN</span><span class="pill">TensorRT</span><span class="pill">C++</span><span class="pill">Jetson Orin</span></div>
+      </div>
+    </section>
+    <section>
+      <h2 class="section-heading">Education</h2>
+      <div class="entry">
+        <div class="entry-header">
+          <div class="entry-title"><h3>Northeastern University</h3><span class="entry-org">B.S. in Electrical and Computer Engineering, Honors Program</span></div>
+          <span class="entry-date">Aug 2026 – May 2030<small>Boston, MA</small></span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= SKILLS ================= -->
+  <main data-view="skills" hidden>
+    <h1>Skills</h1>
+    <section style="margin-top:32px">
+      <div class="skill-group"><h3>Languages</h3><div class="tech"><span class="pill">Python</span><span class="pill">C++</span><span class="pill">Rust</span><span class="pill">SystemVerilog</span><span class="pill">Assembly</span><span class="pill">Bash</span></div></div>
+      <div class="skill-group"><h3>ML &amp; computer vision</h3><div class="tech"><span class="pill">PyTorch</span><span class="pill">TensorFlow</span><span class="pill">Mask R-CNN</span><span class="pill">ResNet</span><span class="pill">scikit-learn</span><span class="pill">OpenCV</span></div></div>
+      <div class="skill-group"><h3>Embedded &amp; prototyping</h3><div class="tech"><span class="pill">UART</span><span class="pill">Serial communication</span><span class="pill">MQTT</span><span class="pill">Fusion 360</span></div></div>
+      <div class="skill-group"><h3>Developer tools</h3><div class="tech"><span class="pill">Git</span><span class="pill">Docker</span><span class="pill">Linux</span><span class="pill">Bash/CLI</span></div></div>
+      <div class="skill-group"><h3>Libraries</h3><div class="tech"><span class="pill">NumPy</span><span class="pill">pandas</span><span class="pill">Matplotlib</span></div></div>
+    </section>
+    <section>
+      <h2 class="section-heading">Awards</h2>
+      <ul class="awards">
+        <li>TI Codes Competition, top 10 nationally (twice)</li>
+        <li>CyberPatriot Platinum Tier</li>
+        <li>National Merit Commended Scholar</li>
+        <li>Cum Laude Society</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">© 2026 Finn Freas</footer>
+</div>
+
+<div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Research poster">
+  <figure>
+    <img src="ms-lesion-poster.jpg" alt="Research poster: The Effect of Retrospective Image Harmonization on Multi-Center Multiple Sclerosis Lesion Segmentation">
+    <figcaption>The Effect of Retrospective Image Harmonization on Multi-Center Multiple Sclerosis Lesion Segmentation</figcaption>
+  </figure>
+  <button type="button" class="lb-close" id="lb-close">Close ✕</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/effects/AsciiEffect.js"></script>
+<script>
+(() => {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const pick = a => a[(Math.random() * a.length) | 0];
+  const MONO = '"JetBrains Mono", Consolas, monospace';
+
+  // ---------- copy email ----------
+  const addr = document.getElementById("addr"), copied = document.getElementById("copied");
+  document.getElementById("copy-mail").addEventListener("click", () => {
+    const ok = () => { copied.textContent = "Copied"; setTimeout(() => copied.textContent = "", 1600); };
+    const fail = () => { const r = document.createRange(); r.selectNodeContents(addr); const s = getSelection(); s.removeAllRanges(); s.addRange(r); copied.textContent = "Selected. Press Ctrl/Cmd+C"; };
+    try { navigator.clipboard.writeText(addr.textContent).then(ok, fail); } catch (e) { fail(); }
+  });
+
+  // ---------- copy git clone commands ----------
+  document.querySelectorAll(".cp").forEach(b => b.addEventListener("click", () => {
+    const text = b.dataset.copy, cmd = b.previousElementSibling;
+    const ok = () => { b.textContent = "copied"; setTimeout(() => b.textContent = "copy", 1500); };
+    const fail = () => { const r = document.createRange(); r.selectNodeContents(cmd); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent = "selected"; };
+    try { navigator.clipboard.writeText(text).then(ok, fail); } catch (e) { fail(); }
+  }));
+
+  // ---------- poster lightbox ----------
+  const lb = document.getElementById("lightbox"), openBtn = document.getElementById("poster-open");
+  const closeLb = () => { lb.hidden = true; openBtn.focus(); };
+  openBtn.addEventListener("click", () => { lb.hidden = false; document.getElementById("lb-close").focus(); });
+  lb.addEventListener("click", e => { if (e.target === lb || e.target.id === "lb-close" || e.target.tagName === "IMG") closeLb(); });
+  addEventListener("keydown", e => { if (e.key === "Escape" && !lb.hidden) closeLb(); });
+
+  // ---------- 2D text layers: faint stars + ASCII explosions ----------
+  const STAR_COL = ["#ffffff", "#dfe1ea", "#c3c6d3", "#9a9eb0"];
+  const HEAT = ["#ffffff", "#fff3a0", "#ffd36b", "#ffb347", "#ff7a3a", "#ff4f6d", "#c56bff", "#5a4bd8"];
+  const DEBRIS = "@#%*+=-.";
+  class TextLayer {
+    constructor(canvas, o) { this.c = canvas; this.g = canvas.getContext("2d"); this.o = o; this.booms = []; this.stars = []; this.W = 0; this.H = 0; this.shooters = []; this.nextShoot = o.shootEvery ? rnd(6, 12) : Infinity; }
+    resize(w, h) {
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      this.W = w; this.H = h;
+      this.c.width = Math.max(1, Math.round(w * dpr)); this.c.height = Math.max(1, Math.round(h * dpr));
+      this.g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      this.FS = this.o.fs(w);
+      this.g.font = `${this.FS}px ${MONO}`; this.g.textAlign = "center"; this.g.textBaseline = "middle";
+      this.CW = this.g.measureText("M").width || this.FS * 0.6; this.CH = this.FS * 1.18;
+      const n = Math.min(this.o.maxStars, Math.round(w * h / this.o.starArea));
+      this.stars = Array.from({ length: n }, () => {
+        const r = Math.random();
+        return { x: Math.random() * w, y: Math.random() * h, d: rnd(0.15, 1), ch: r < 0.65 ? "." : r < 0.88 ? "·" : "+", c: pick(STAR_COL), ph: rnd(0, 6.28), sp: rnd(0.4, 1.6) };
+      });
+    }
+    sx(x) { return Math.round(x / this.CW) * this.CW; }
+    sy(y) { return Math.round(y / this.CH) * this.CH; }
+    put(ch, x, y, col, a) { this.g.globalAlpha = a; this.g.fillStyle = col; this.g.fillText(ch, x, y); }
+    boom(x, y, s) {
+      const n = Math.round(85 * s);
+      this.booms.push({ x, y, s, age: 0, parts: Array.from({ length: n }, () => { const a = rnd(0, 6.283), sp = rnd(50, 290) * s; return { x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: rnd(0.8, 1.7) }; }) });
+    }
+    frame(t, dt, scroll) {
+      const g = this.g; g.globalAlpha = 1; g.clearRect(0, 0, this.W, this.H);
+      for (const s of this.stars) {
+        let y = (s.y - scroll * s.d * 0.15) % this.H; if (y < 0) y += this.H;
+        const a = reduce ? 0.7 : 0.5 + 0.5 * (0.5 + 0.5 * Math.sin(t * s.sp + s.ph));
+        this.put(s.ch, s.x, y, s.c, a * (0.25 + 0.6 * s.d) * this.o.starAlpha);
+      }
+      // shooting stars: one roughly every shootEvery seconds
+      if (view !== "home") this.shooters = [];   // shooting stars only on the front page
+      if (!reduce && view === "home" && t > this.nextShoot) {
+        const fromLeft = Math.random() < 0.5, sp = rnd(0.55, 0.8) * Math.max(this.W, this.H);
+        const ang = rnd(0.25, 0.55);
+        this.shooters.push({ x: fromLeft ? rnd(0, this.W * 0.5) : rnd(this.W * 0.5, this.W), y: rnd(0, this.H * 0.45), vx: (fromLeft ? 1 : -1) * Math.cos(ang) * sp, vy: Math.sin(ang) * sp, age: 0, life: rnd(0.9, 1.3) });
+        this.nextShoot = t + rnd(this.o.shootEvery * 0.75, this.o.shootEvery * 1.25);
+      }
+      this.shooters = this.shooters.filter(s => (s.age += dt) < s.life);
+      for (const s of this.shooters) {
+        s.x += s.vx * dt; s.y += s.vy * dt;
+        const fade = Math.min(1, s.age / 0.15) * (1 - s.age / s.life), trail = s.vx > 0 ? "\\" : "/";
+        for (let k = 0; k < 9; k++) this.put(k ? (k < 3 ? "*" : trail) : "@", this.sx(s.x - s.vx * 0.014 * k), this.sy(s.y - s.vy * 0.014 * k), k < 2 ? "#ffffff" : "#cfe3ff", fade * (1 - k / 9));
+      }
+      this.booms = this.booms.filter(b => (b.age += dt) < 2);
+      for (const b of this.booms) {
+        if (b.age < 0.2) {
+          const r0 = 28 * b.s * (0.4 + b.age / 0.2);
+          for (let y = this.sy(b.y - r0); y <= b.y + r0; y += this.CH) for (let x = this.sx(b.x - r0); x <= b.x + r0; x += this.CW) {
+            const d = Math.hypot(x - b.x, y - b.y) / r0;
+            if (d < 1) this.put(d < 0.5 ? "@" : "#", x, y, d < 0.5 ? "#ffffff" : "#fff3a0", 1 - b.age / 0.2 * 0.6);
+          }
+        }
+        if (b.age < 0.75) {
+          const k = b.age / 0.75, r = 220 * b.s * (1 - Math.pow(1 - k, 3)), steps = Math.max(12, Math.ceil(2 * Math.PI * r / (this.CW * 1.2)));
+          for (let i = 0; i < steps; i++) { const a = i / steps * 6.283; this.put(i % 3 ? "*" : "o", this.sx(b.x + Math.cos(a) * r), this.sy(b.y + Math.sin(a) * r * 0.85), k < 0.4 ? "#fff3a0" : "#ff9a3d", 1 - k); }
+        }
+        for (const p of b.parts) {
+          const fr = b.age / p.life; if (fr >= 1) continue;
+          const drag = Math.exp(-2.4 * dt); p.vx *= drag; p.vy *= drag; p.x += p.vx * dt; p.y += p.vy * dt;
+          this.put(DEBRIS[Math.min(DEBRIS.length - 1, (fr * DEBRIS.length) | 0)], this.sx(p.x), this.sy(p.y), HEAT[Math.min(HEAT.length - 1, (fr * HEAT.length) | 0)], 1 - fr * fr);
+        }
+      }
+    }
+  }
+  const pageSky = new TextLayer(document.getElementById("sky"), { maxStars: 260, starArea: 5200, starAlpha: 0.55, shootEvery: 30, fs: w => (w < 640 ? 11 : 13) });
+  const stageStars = new TextLayer(document.getElementById("stage-stars"), { maxStars: 200, starArea: 900, starAlpha: 0.8, fs: () => 11 });
+  const stageFx = new TextLayer(document.getElementById("stage-fx"), { maxStars: 0, starArea: 1e9, starAlpha: 0, fs: w => (w < 420 ? 9 : 11) });
+
+  // ---------- colored 3D scene drawn as classic ASCII (three.js AsciiEffect) ----------
+  const RAMP = " .:-=+*#%@";
+  const stage = document.getElementById("stage"), host = document.getElementById("ascii");
+  let three = null, T = 0, view = "";
+
+  function makeBanded(geo, stops, axis) {
+    const pos = geo.attributes.position, col = [], c = new THREE.Color();
+    for (let i = 0; i < pos.count; i++) {
+      const v = axis === "y" ? pos.getY(i) : Math.atan2(pos.getZ(i), pos.getX(i));
+      const k = Math.abs(Math.sin(v * (axis === "y" ? 4.2 : 3) + (axis === "y" ? 0 : Math.sin(pos.getY(i) * 2.5) * 1.4)));
+      c.set(stops[Math.min(stops.length - 1, Math.floor(k * stops.length))]); col.push(c.r, c.g, c.b);
+    }
+    geo.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    return geo;
+  }
+  function buildThree() {
+    if (!window.THREE || !THREE.AsciiEffect) return null;
+    let renderer;
+    try { renderer = new THREE.WebGLRenderer({ antialias: false, alpha: false }); } catch (e) { return null; }
+    if (!renderer.getContext()) return null;
+    renderer.setPixelRatio(1);
+    renderer.setClearColor(0x000000, 1);   // opaque: AsciiEffect turns transparent pixels into the brightest glyph
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(42, 16 / 10, 0.1, 200);
+    const sunPos = new THREE.Vector3(4.6, 2.5, 2.5);
+    const sun = new THREE.Mesh(new THREE.SphereGeometry(1.55, 32, 16), new THREE.MeshBasicMaterial({ color: 0xffd06a }));
+    sun.position.copy(sunPos); scene.add(sun);
+    const corona = new THREE.Mesh(new THREE.SphereGeometry(2.0, 32, 16), new THREE.MeshBasicMaterial({ color: 0xff8a3d, transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending, depthWrite: false }));
+    corona.position.copy(sunPos); scene.add(corona);
+    // rays + solar flares live in a group that always faces the camera, centred on the sun
+    const SUN_R = 1.55;
+    const flareGroup = new THREE.Group(); flareGroup.position.copy(sunPos); scene.add(flareGroup);
+    const rays = [];
+    const rayGeo = new THREE.ConeGeometry(0.3, 1, 6, 1); rayGeo.translate(0, 0.5, 0);
+    for (let i = 0; i < 16; i++) {
+      const long = i % 2 === 0;
+      const pivot = new THREE.Group(); pivot.rotation.z = (i / 16) * Math.PI * 2;
+      const mat = new THREE.MeshBasicMaterial({ color: long ? 0xffd36b : 0xff8a3d, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false });
+      const ray = new THREE.Mesh(rayGeo, mat);
+      ray.position.y = SUN_R * 0.92;
+      ray.scale.set(long ? 1.15 : 0.8, 1, long ? 1.15 : 0.8);
+      ray.userData = { base: long ? 2.1 : 1.25, sp: rnd(1.2, 2.6), ph: rnd(0, 6.28) };
+      pivot.add(ray); flareGroup.add(pivot); rays.push(ray);
+    }
+    const flares = [];
+    const flareGeo = new THREE.TorusGeometry(0.85, 0.17, 6, 28, Math.PI);
+    for (let i = 0; i < 3; i++) {
+      const mat = new THREE.MeshBasicMaterial({ color: 0xffb347, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+      const pivot = new THREE.Group();
+      const arc = new THREE.Mesh(flareGeo, mat); arc.position.y = SUN_R * 0.95;
+      pivot.add(arc); flareGroup.add(pivot);
+      flares.push({ pivot, arc, mat, start: -10, life: 2.2 });
+    }
+    const light = new THREE.PointLight(0xfff2dc, 2.6, 0, 0); light.position.copy(sunPos); scene.add(light);
+    scene.add(new THREE.AmbientLight(0x4a5590, 0.9));
+    const planetGroup = new THREE.Group(); planetGroup.position.set(-2.4, -0.4, 0); scene.add(planetGroup);
+    const tilt = new THREE.Group(); tilt.rotation.z = 0.38; tilt.rotation.x = 0.12; planetGroup.add(tilt);
+    const planet = new THREE.Mesh(makeBanded(new THREE.SphereGeometry(2.5, 64, 32), ["#c79bff", "#ff9fd2", "#ffe2b8", "#b48cff"], "y"), new THREE.MeshLambertMaterial({ vertexColors: true }));
+    tilt.add(planet);
+    const ringGeo = new THREE.RingGeometry(3.3, 5.3, 128, 3);
+    const rpos = ringGeo.attributes.position, rcol = [], rc = new THREE.Color();
+    for (let i = 0; i < rpos.count; i++) { const r = Math.hypot(rpos.getX(i), rpos.getY(i)); rc.set(r < 3.9 ? "#7fdcff" : r < 4.4 ? "#bff1ff" : "#5aa9d6"); rcol.push(rc.r, rc.g, rc.b); }
+    ringGeo.setAttribute("color", new THREE.Float32BufferAttribute(rcol, 3));
+    const ring = new THREE.Mesh(ringGeo, new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide }));
+    ring.rotation.x = -Math.PI / 2; tilt.add(ring);
+    const moonPivot = new THREE.Group(); moonPivot.rotation.x = 0.35; planetGroup.add(moonPivot);
+    const moon = new THREE.Mesh(makeBanded(new THREE.SphereGeometry(0.75, 32, 16), ["#4aa3ff", "#6be39a", "#4aa3ff", "#3d7fe0"], "lon"), new THREE.MeshLambertMaterial({ vertexColors: true }));
+    moon.position.set(7.2, 0, 0); moonPivot.add(moon);
+    const rocks = new THREE.Group(); scene.add(rocks);
+    for (let i = 0; i < 9; i++) {
+      const m = new THREE.Mesh(new THREE.IcosahedronGeometry(rnd(0.12, 0.3), 0), new THREE.MeshLambertMaterial({ color: pick([0xffb347, 0xff8fb8, 0xcfe3ff]) }));
+      const a = rnd(0, 6.28), r = rnd(9.5, 11.5); m.position.set(Math.cos(a) * r - 2.4, rnd(-0.6, 0.6), Math.sin(a) * r); m.userData.spin = rnd(0.5, 2); rocks.add(m);
+    }
+    return { renderer, scene, camera, effect: null, nextFlare: 0.6, objs: { planet, moonPivot, moon, corona, rocks, planetGroup, flareGroup, rays, flares } };
+  }
+  function makeEffect(w, h) {
+    if (!three || w < 2 || h < 2) return;
+    if (three.effect) three.effect.domElement.remove();
+    const res = w < 420 ? 0.2 : 0.17;
+    const effect = new THREE.AsciiEffect(three.renderer, RAMP, { invert: true, resolution: res, color: true });
+    effect.setSize(Math.round(w), Math.round(h));
+    const table = effect.domElement.querySelector("table");
+    const fsz = 2 / res, probe = document.createElement("canvas").getContext("2d");
+    probe.font = `${fsz}px ${MONO}`;
+    const adv = probe.measureText("M").width || fsz * 0.6;
+    table.style.fontFamily = MONO;
+    table.style.letterSpacing = (1 / res - adv) + "px";   // fit the glyph grid exactly: 1/res px per cell
+    host.appendChild(effect.domElement);
+    three.effect = effect;
+    three.camera.aspect = w / h; three.camera.updateProjectionMatrix();
+  }
+  function sizeAll() {
+    pageSky.resize(innerWidth, innerHeight);
+    const r = stage.getBoundingClientRect();
+    if (r.width > 1 && r.height > 1) { stageStars.resize(r.width, r.height); stageFx.resize(r.width, r.height); makeEffect(r.width, r.height); }
+  }
+  function renderThree(t) {
+    if (!three || !three.effect) return;
+    const { planet, moonPivot, moon, corona, rocks, planetGroup } = three.objs, cam = three.camera;
+    planet.rotation.y = t * 0.25;
+    moonPivot.rotation.y = t * 0.32; moon.rotation.y = t * 0.8;
+    corona.scale.setScalar(1 + 0.05 * Math.sin(t * 2.2));
+    rocks.rotation.y = t * 0.05; rocks.children.forEach(r => { r.rotation.x = t * r.userData.spin; r.rotation.y = t * r.userData.spin * 0.7; });
+    cam.position.set(Math.sin(t * 0.08) * 3, 2.6 + Math.sin(t * 0.11) * 0.8, 17);
+    cam.lookAt(planetGroup.position.x + 2.2, 0.6, 0);
+    // sun rays: face the camera, turn slowly, and pulse in length
+    const { flareGroup, rays, flares } = three.objs;
+    flareGroup.quaternion.copy(cam.quaternion);
+    flareGroup.rotateZ(t * 0.12);
+    for (const r of rays) { const u = r.userData; r.scale.y = u.base * (0.65 + 0.45 * Math.sin(t * u.sp + u.ph) + 0.15 * Math.sin(t * u.sp * 2.7)); }
+    // solar flares: an arc loops off the sun's edge, swells, and fades
+    if (t > three.nextFlare) {
+      const f = flares.find(x => t - x.start > x.life);
+      if (f) { f.start = t; f.pivot.rotation.z = rnd(0, Math.PI * 2); f.life = rnd(1.8, 2.8); }
+      three.nextFlare = t + rnd(1.2, 2.6);
+    }
+    for (const f of flares) {
+      const k = (t - f.start) / f.life;
+      if (k < 0 || k > 1) { f.mat.opacity = 0; continue; }
+      const grow = Math.min(1, k / 0.35);
+      f.arc.scale.set(0.5 + grow * 0.9, 0.3 + grow * 1.4, 1);
+      f.mat.opacity = k < 0.35 ? grow : 1 - (k - 0.35) / 0.65;
+      f.mat.color.setHex(k < 0.4 ? 0xffe28a : k < 0.7 ? 0xffa340 : 0xff5f3a);
+    }
+    three.effect.render(three.scene, cam);
+  }
+
+  let last = 0;
+  function loop(now) {
+    requestAnimationFrame(loop);
+    if (now - last < 30) return;
+    const dt = Math.min(0.06, (now - last) / 1000 || 0.03); last = now;
+    T += dt;
+    pageSky.frame(T, dt, window.scrollY);
+    if (view === "home") { stageStars.frame(T, dt, 0); renderThree(T); stageFx.frame(T, dt, 0); if (!reduce) drawShip(T, dt); }
+  }
+  function still() { pageSky.frame(1, 0, window.scrollY); if (view === "home") { stageStars.frame(1, 0, 0); renderThree(6); stageFx.frame(1, 0, 0); } }
+
+  // ---------- spaceship fly-by (about once a minute) ----------
+  const SHIP = ["  ▄▄▄", "##▄███▓▓▒▒▄▄▄▄▄▄▄>", "##▀███▓▓▒▒▀▀▀▀", "  ▀▀▀"];
+  const SHIP_W = 18;
+  const HULL = { "█": "#3d7fe0", "▓": "#5ab4ff", "▒": "#bff1ff", "▄": "#2f63c4", "▀": "#2f63c4", ">": "#ffffff", "<": "#ffffff" };
+  const MIRROR = { "/": "\\", "\\": "/", ">": "<", "<": ">", "[": "]", "]": "[" };
+  const SHIP_L = SHIP.map(r => [...r.padEnd(SHIP_W)].reverse().map(c => MIRROR[c] || c).join(""));
+  let ship = null, nextShip = rnd(8, 14);
+  function drawShip(t, dt) {
+    const L = stageFx;
+    if (!ship && t > nextShip && L.W > 0) {
+      const dir = Math.random() < 0.5 ? 1 : -1, w = SHIP_W * L.CW;
+      ship = { dir, x: dir > 0 ? -w : L.W, y: rnd(0.18, 0.72) * L.H, vx: dir * (L.W + w) / rnd(5, 7), w, ph: rnd(0, 6) };
+    }
+    if (!ship) return;
+    ship.x += ship.vx * dt;
+    const rows = ship.dir > 0 ? SHIP : SHIP_L, bob = Math.sin(t * 2.2 + ship.ph) * L.CH * 0.4;
+    rows.forEach((row, r) => [...row].forEach((ch, c) => {
+      if (ch === " ") return;
+      const x = L.sx(ship.x + c * L.CW), y = L.sy(ship.y + r * L.CH + bob);
+      if (ch === "#") {
+        const fl = "#*=~"[(Math.random() * 4) | 0];   // ion engines
+        L.put(fl, x, y, ["#ffffff", "#9fe8ff", "#5ab4ff"][(Math.random() * 3) | 0], 0.75 + 0.25 * Math.random());
+      } else L.put(ch, x, y, HULL[ch] || "#5ab4ff", 1);
+    }));
+    // a short fading exhaust trail behind the ship
+    const tailX = ship.dir > 0 ? ship.x - L.CW : ship.x + SHIP_W * L.CW;
+    for (const row of [1, 2]) for (let k = 1; k <= 6; k++) L.put(k < 3 ? "=" : "-", L.sx(tailX - ship.dir * k * L.CW), L.sy(ship.y + row * L.CH + bob), "#5ab4ff", 0.6 * (1 - k / 7));
+    if ((ship.dir > 0 && ship.x > L.W + 10) || (ship.dir < 0 && ship.x < -ship.w - 10)) { ship = null; nextShip = t + rnd(50, 70); }
+  }
+
+  stage.addEventListener("click", e => {
+    if (reduce) return;
+    const r = stage.getBoundingClientRect(), cx = e.clientX - r.left, cy = e.clientY - r.top;
+    if (ship && cx > ship.x - 10 && cx < ship.x + ship.w + 10 && cy > ship.y - 20 && cy < ship.y + 4 * stageFx.CH + 20) {
+      stageFx.boom(ship.x + ship.w / 2, ship.y + 2 * stageFx.CH, 0.9); ship = null; nextShip = T + rnd(50, 70); return;
+    }
+    stageFx.boom(cx, cy, rnd(0.4, 0.65));
+  });
+
+  // ---------- views ----------
+  const VIEWS = ["home", "projects", "experience", "skills"];
+  function route() {
+    const h = location.hash.slice(1);
+    let next = VIEWS.includes(h) ? h : "home";
+    const changed = next !== view;
+    view = next;
+    document.querySelectorAll("[data-view]").forEach(m => m.hidden = m.dataset.view !== view);
+    document.querySelectorAll("[data-nav]").forEach(a => { if (a.dataset.nav === view) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+    if (h === "contact") { requestAnimationFrame(() => document.getElementById("contact").scrollIntoView()); }
+    else if (changed) window.scrollTo(0, 0);
+    if (view === "home") requestAnimationFrame(() => { sizeAll(); if (reduce) still(); });
+    else if (reduce) still();
+  }
+  addEventListener("hashchange", route);
+
+  let rt;
+  addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { sizeAll(); if (reduce) still(); }, 150); });
+  if (reduce) addEventListener("scroll", () => requestAnimationFrame(() => pageSky.frame(1, 0, window.scrollY)), { passive: true });
+
+  function start() {
+    three = buildThree();
+    if (!three) host.innerHTML = '<div style="display:grid;place-items:center;height:100%;font:13px var(--f-head);color:var(--dim)">The 3D view needs WebGL, which this browser has turned off.</div>';
+    route();
+    sizeAll();
+    if (reduce) still(); else requestAnimationFrame(loop);
+  }
+  (document.fonts && document.fonts.load ? document.fonts.load('14px "JetBrains Mono"').catch(() => {}) : Promise.resolve()).then(start);
+})();
+</script>
+</body>
+</html>
