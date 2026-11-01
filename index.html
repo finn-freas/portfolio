@@ -125,7 +125,7 @@ section + section { margin-top: 56px; }
 .tdemo .term { max-width: 1040px; margin: 0 auto; border: 1px solid var(--line); border-radius: 8px; background: #07080c; overflow: hidden; box-shadow: 0 0 0 1px #000, 0 30px 80px rgba(0,0,0,.6); }
 .term-bar { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); background: #0d0e14; font: 400 12.5px/1 var(--f-mono); color: var(--faint); }
 .term-bar .dots { display: flex; gap: 6px; } .term-bar .dots i { width: 10px; height: 10px; border-radius: 50%; background: #2a2c36; display: block; }
-.term-bar .t { flex: 1; text-align: center; }
+.term-bar .t { flex: 1; }
 .term-x { appearance: none; background: none; border: 0; color: var(--dim); font: 400 12.5px/1 var(--f-mono); cursor: pointer; padding: 2px 4px; } .term-x:hover { color: var(--ink); }
 .term-body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 12px; font: 400 13.5px/1.6 var(--f-mono); color: var(--dim); }
 .term-body p { margin: 0; }
@@ -432,7 +432,7 @@ section + section { margin-top: 56px; }
 
 <div class="tdemo" id="demo" hidden role="dialog" aria-modal="true" aria-labelledby="demo-title">
   <div class="term">
-    <div class="term-bar"><span class="dots"><i></i><i></i><i></i></span><span class="t" id="demo-title">finn@finnfreas.com: ~/trash-detection</span><button type="button" class="term-x" id="demo-close">esc ✕</button></div>
+    <div class="term-bar"><span class="t" id="demo-title">finn@finnfreas.com: ~/trash-detection</span><button type="button" class="term-x" id="demo-close">esc ✕</button></div>
     <div class="term-body">
       <p><span class="ps">$</span> <span class="cmd">./detect --weights best.int8.onnx --device your-browser</span></p>
       <p class="cm"># runs locally: your photo never leaves this page. weights are 8-bit, so scores can differ slightly from the full model.</p>
