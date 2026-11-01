@@ -121,6 +121,26 @@ section + section { margin-top: 56px; }
 .lightbox figure { margin: 0; display: flex; flex-direction: column; gap: 10px; max-width: min(1100px, 100%); }
 .lightbox img { width: 100%; height: auto; max-height: 82vh; object-fit: contain; background: #fff; }
 .lightbox figcaption { font: 400 14px/1.4 var(--f-head); color: var(--dim); }
+/* trash detection live demo */
+.demo-open { margin: 0 0 14px; color: var(--green); border-color: #2c5a3f; }
+.demo-open:hover { color: var(--ink); border-color: var(--green); }
+.demo { position: fixed; inset: 0; z-index: 25; background: var(--night); overflow-y: auto; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.demo-inner { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+.demo-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.demo h2 { margin: 0; font: 700 22px/1.3 var(--f-head); color: var(--ink); letter-spacing: -0.02em; }
+.demo-note { margin: 0; font: 400 13px/1.6 var(--f-mono); color: var(--faint); }
+.demo-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.demo-controls .btn { font-family: var(--f-mono); }
+.demo-file { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.demo-slider { display: flex; align-items: center; gap: 10px; font: 400 13px/1 var(--f-mono); color: var(--dim); flex: 1 1 260px; }
+.demo-slider input { flex: 1; accent-color: var(--green); min-width: 120px; }
+.demo-slider output { color: var(--ink); min-width: 3.2ch; text-align: right; }
+.demo-stage { position: relative; background: #000; border: 1px solid var(--line); border-radius: 6px; min-height: 220px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.demo-stage canvas { display: block; width: auto; height: auto; max-width: 100%; max-height: 72vh; }
+.demo-empty { font: 400 14px/1.6 var(--f-mono); color: var(--faint); text-align: center; padding: 40px 20px; }
+.demo-status { margin: 0; font: 400 13px/1.6 var(--f-mono); color: var(--dim); min-height: 1.6em; }
+.demo-counts { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 400 13.5px/1.6 var(--f-mono); color: var(--body); }
+.demo-counts i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
 .lb-close { position: absolute; top: max(16px, env(safe-area-inset-top, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); appearance: none; background: none; border: 1px solid var(--line); color: var(--ink); font: 400 13px/1 var(--f-head); padding: 9px 12px; border-radius: 4px; cursor: pointer; }
 
 .entry-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 10px; }
@@ -255,6 +275,20 @@ section + section { margin-top: 56px; }
       </div>
 
       <div class="entry">
+        <div class="project-header"><h3 class="project-title">Trash Detection</h3></div>
+        <p class="project-desc">A YOLOv5 model trained to find trash and litter in photos of streets, parks and beaches, with augmentation for rotation, shear, color and noise.</p>
+        <button class="poster" type="button" data-full="trash-detection-results.jpg" data-caption="The trained model's output on a real outdoor photo: each box is a piece of litter it found, labeled plastic, paper or cardboard with a confidence score." aria-label="View the trash detection result larger">
+          <img src="trash-detection-results.jpg" alt="Outdoor photo with colored boxes around litter, labeled Plastic, Paper and Cardboard with confidence scores" width="1600" height="1200" loading="lazy">
+          <span>See it in action ↗</span>
+        </button>
+        <button class="btn demo-open" type="button" id="demo-open">▶ Try it on your own photo</button>
+        <div class="foot">
+          <div class="tech"><span class="pill">Python</span><span class="pill">PyTorch</span><span class="pill">YOLOv5</span></div>
+        </div>
+        <div class="cmdline"><a class="cmd" href="https://github.com/finn-freas/Trash_Detection" target="_blank" rel="noopener">git clone https://github.com/finn-freas/Trash_Detection</a><button type="button" class="cp" data-copy="git clone https://github.com/finn-freas/Trash_Detection">copy</button></div>
+      </div>
+
+      <div class="entry">
         <div class="project-header"><h3 class="project-title">Calculator-to-Radio Long-Range Module</h3><span class="highlight">Texas Instruments Coding Competition Top 10</span></div>
         <p class="project-desc">Long-range wireless messaging on a Texas Instruments graphing calculator. Software in Assembly and Python drives a radio module over UART, inside a 3D-printed case.</p>
         <div class="foot">
@@ -270,23 +304,6 @@ section + section { margin-top: 56px; }
         </div>
       </div>
 
-      <div class="entry">
-        <div class="project-header"><h3 class="project-title">Trash Detection</h3></div>
-        <p class="project-desc">A YOLOv5 model trained to find trash and litter in photos of streets, parks and beaches, with augmentation for rotation, shear, color and noise.</p>
-        <div class="foot">
-          <div class="tech"><span class="pill">Python</span><span class="pill">PyTorch</span><span class="pill">YOLOv5</span></div>
-        </div>
-        <div class="cmdline"><a class="cmd" href="https://github.com/finn-freas/Trash_Detection" target="_blank" rel="noopener">git clone https://github.com/finn-freas/Trash_Detection</a><button type="button" class="cp" data-copy="git clone https://github.com/finn-freas/Trash_Detection">copy</button></div>
-      </div>
-
-      <div class="entry">
-        <div class="project-header"><h3 class="project-title">CyberPatriot Hardening Script</h3></div>
-        <p class="project-desc">A Bash script that locks down an Ubuntu machine for the CyberPatriot competition: firewall, Fail2Ban, malware scan, audit logging, SSH lockdown and password policy.</p>
-        <div class="foot">
-          <div class="tech"><span class="pill">Bash</span><span class="pill">Ubuntu</span></div>
-        </div>
-        <div class="cmdline"><a class="cmd" href="https://github.com/finn-freas/CyberPatriot-Hardening" target="_blank" rel="noopener">git clone https://github.com/finn-freas/CyberPatriot-Hardening</a><button type="button" class="cp" data-copy="git clone https://github.com/finn-freas/CyberPatriot-Hardening">copy</button></div>
-      </div>
     </section>
   </main>
 
@@ -382,10 +399,29 @@ section + section { margin-top: 56px; }
 
 <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Research poster">
   <figure>
-    <img src="ms-lesion-poster.jpg" alt="Research poster: The Effect of Retrospective Image Harmonization on Multi-Center Multiple Sclerosis Lesion Segmentation">
-    <figcaption>The Effect of Retrospective Image Harmonization on Multi-Center Multiple Sclerosis Lesion Segmentation</figcaption>
+    <img id="lb-img" src="ms-lesion-poster.jpg" alt="Research poster: The Effect of Retrospective Image Harmonization on Multi-Center Multiple Sclerosis Lesion Segmentation">
+    <figcaption id="lb-cap">The Effect of Retrospective Image Harmonization on Multi-Center Multiple Sclerosis Lesion Segmentation</figcaption>
   </figure>
   <button type="button" class="lb-close" id="lb-close">Close ✕</button>
+</div>
+
+<div class="demo" id="demo" hidden role="dialog" aria-modal="true" aria-labelledby="demo-title">
+  <div class="demo-inner">
+    <div class="demo-top">
+      <h2 id="demo-title">Trash Detection, live</h2>
+      <button type="button" class="lb-close" id="demo-close" style="position:static">Close ✕</button>
+    </div>
+    <p class="demo-note">My trained YOLOv5 model, running in your browser. Your photo isn't uploaded anywhere. (The web version is compressed to 8-bit, so results can differ slightly from the full model.)</p>
+    <div class="demo-controls">
+      <label class="btn" for="demo-file">Upload a photo</label>
+      <input class="demo-file" id="demo-file" type="file" accept="image/*">
+      <button type="button" class="btn" id="demo-example">Use example photo</button>
+      <label class="demo-slider" for="demo-conf">confidence <input id="demo-conf" type="range" min="0.05" max="0.95" step="0.05" value="0.25"><output id="demo-conf-val">0.25</output></label>
+    </div>
+    <p class="demo-status" id="demo-status" aria-live="polite"></p>
+    <div class="demo-stage" id="demo-stage"><div class="demo-empty">Upload a photo of litter, or try the example.</div></div>
+    <div class="demo-counts" id="demo-counts"></div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
@@ -414,11 +450,147 @@ section + section { margin-top: 56px; }
   }));
 
   // ---------- poster lightbox ----------
-  const lb = document.getElementById("lightbox"), openBtn = document.getElementById("poster-open");
-  const closeLb = () => { lb.hidden = true; openBtn.focus(); };
-  openBtn.addEventListener("click", () => { lb.hidden = false; document.getElementById("lb-close").focus(); });
+  const lb = document.getElementById("lightbox"), lbImg = document.getElementById("lb-img"), lbCap = document.getElementById("lb-cap");
+  let openBtn = null;
+  const closeLb = () => { lb.hidden = true; if (openBtn) openBtn.focus(); };
+  document.querySelectorAll(".poster").forEach(btn => btn.addEventListener("click", () => {
+    const img = btn.querySelector("img");
+    lbImg.src = btn.dataset.full || img.src; lbImg.alt = img.alt;
+    lbCap.textContent = btn.dataset.caption || img.alt.replace(/^Research poster: /, "");
+    lbImg.style.background = btn.dataset.full ? "#000" : "#fff";
+    openBtn = btn; lb.hidden = false; document.getElementById("lb-close").focus();
+  }));
   lb.addEventListener("click", e => { if (e.target === lb || e.target.id === "lb-close" || e.target.tagName === "IMG") closeLb(); });
   addEventListener("keydown", e => { if (e.key === "Escape" && !lb.hidden) closeLb(); });
+
+  // ---------- trash detection demo (ONNX Runtime Web, runs locally) ----------
+  (() => {
+    const ORT_VER = "1.18.0", ORT_BASE = `https://cdn.jsdelivr.net/npm/onnxruntime-web@${ORT_VER}/dist/`;
+    const NAMES = ["Cardboard", "Coffee Cup", "Glass", "Mask", "Metal", "Paper", "Plastic", "Styrofoam"];
+    const COLORS = ["#4f8cff", "#ffb347", "#5fd3e8", "#c56bff", "#c3c6d3", "#ff6bc1", "#ff5a5a", "#6be39a"];
+    const S = 640, FLOOR = 0.05;
+    const demo = document.getElementById("demo"), openBtn = document.getElementById("demo-open");
+    if (!demo || !openBtn) return;
+    const $ = id => document.getElementById(id);
+    const status = $("demo-status"), stage = $("demo-stage"), counts = $("demo-counts"), conf = $("demo-conf"), confVal = $("demo-conf-val");
+    let session = null, loading = null, cand = [], bmp = null, busy = false;
+
+    const loadScript = src => new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = () => rej(new Error("script")); document.head.appendChild(s); });
+    async function getSession() {
+      if (session) return session;
+      if (!loading) loading = (async () => {
+        status.textContent = "Loading the model (7.6 MB, first time only)…";
+        if (!window.ort) await loadScript(ORT_BASE + "ort.min.js");
+        ort.env.wasm.wasmPaths = ORT_BASE; ort.env.wasm.numThreads = 1;
+        session = await ort.InferenceSession.create("trash-model.onnx", { executionProviders: ["wasm"] });
+        return session;
+      })();
+      return loading;
+    }
+
+    function iou(a, b) {
+      const x1 = Math.max(a.x1, b.x1), y1 = Math.max(a.y1, b.y1), x2 = Math.min(a.x2, b.x2), y2 = Math.min(a.y2, b.y2);
+      const inter = Math.max(0, x2 - x1) * Math.max(0, y2 - y1);
+      return inter / ((a.x2 - a.x1) * (a.y2 - a.y1) + (b.x2 - b.x1) * (b.y2 - b.y1) - inter);
+    }
+    function select(th) {
+      const keep = [];
+      const list = cand.filter(d => d.s >= th).sort((a, b) => b.s - a.s);
+      for (const d of list) if (!keep.some(k => k.c === d.c && iou(k, d) > 0.45)) keep.push(d);
+      return keep;
+    }
+
+    async function infer(image) {
+      if (busy) return; busy = true;
+      try {
+        const sess = await getSession();
+        status.textContent = "Running the model…";
+        await new Promise(r => setTimeout(r, 30));
+        const w = image.width, h = image.height, r = Math.min(S / w, S / h);
+        const nw = Math.round(w * r), nh = Math.round(h * r), px = Math.floor((S - nw) / 2), py = Math.floor((S - nh) / 2);
+        const c = document.createElement("canvas"); c.width = c.height = S;
+        const g = c.getContext("2d"); g.fillStyle = "rgb(114,114,114)"; g.fillRect(0, 0, S, S);
+        g.imageSmoothingQuality = "high"; g.drawImage(image, px, py, nw, nh);
+        const px8 = g.getImageData(0, 0, S, S).data, input = new Float32Array(3 * S * S);
+        for (let i = 0, n = S * S; i < n; i++) { input[i] = px8[i * 4] / 255; input[i + n] = px8[i * 4 + 1] / 255; input[i + 2 * n] = px8[i * 4 + 2] / 255; }
+        const out = await sess.run({ [sess.inputNames[0]]: new ort.Tensor("float32", input, [1, 3, S, S]) });
+        const o = out[sess.outputNames[0]], d = o.data, rows = o.dims[1], cols = o.dims[2];
+        cand = [];
+        for (let i = 0; i < rows; i++) {
+          const b = i * cols, obj = d[b + 4]; if (obj < FLOOR) continue;
+          let ci = 0, cp = 0; for (let k = 5; k < cols; k++) if (d[b + k] > cp) { cp = d[b + k]; ci = k - 5; }
+          const sc = obj * cp; if (sc < FLOOR) continue;
+          const cx = (d[b] - px) / r, cy = (d[b + 1] - py) / r, bw = d[b + 2] / r, bh = d[b + 3] / r;
+          cand.push({ x1: Math.max(0, cx - bw / 2), y1: Math.max(0, cy - bh / 2), x2: Math.min(w, cx + bw / 2), y2: Math.min(h, cy + bh / 2), s: sc, c: ci });
+        }
+        bmp = image; draw();
+        status.textContent = "Done. Drag the slider to change the confidence threshold.";
+      } catch (e) {
+        console.error(e);
+        status.textContent = "Sorry, the model couldn't run in this browser.";
+      } finally { busy = false; }
+    }
+
+    function draw() {
+      if (!bmp) return;
+      const th = +conf.value, dets = select(th);
+      const maxW = 1600, sc = Math.min(1, maxW / bmp.width);
+      const cv = document.createElement("canvas"); cv.width = Math.round(bmp.width * sc); cv.height = Math.round(bmp.height * sc);
+      const g = cv.getContext("2d"); g.drawImage(bmp, 0, 0, cv.width, cv.height);
+      const lw = Math.max(2, cv.width / 400), fs = Math.max(12, Math.round(cv.width / 55));
+      g.font = `500 ${fs}px "JetBrains Mono", monospace`; g.textBaseline = "top";
+      for (const dd of dets) {
+        const col = COLORS[dd.c], x = dd.x1 * sc, y = dd.y1 * sc, bw = (dd.x2 - dd.x1) * sc, bh = (dd.y2 - dd.y1) * sc;
+        g.strokeStyle = col; g.lineWidth = lw; g.strokeRect(x, y, bw, bh);
+        const label = `${NAMES[dd.c]} ${dd.s.toFixed(2)}`, tw = g.measureText(label).width + fs * 0.6, th2 = fs * 1.35;
+        const ly = y - th2 >= 0 ? y - th2 : y, lx = Math.max(0, Math.min(x - lw / 2, cv.width - tw));
+        g.fillStyle = col; g.fillRect(lx, ly, tw, th2);
+        g.fillStyle = "#0a0b10"; g.fillText(label, lx + fs * 0.3, ly + fs * 0.18);
+      }
+      stage.replaceChildren(cv);
+      const tally = {}; dets.forEach(d => tally[d.c] = (tally[d.c] || 0) + 1);
+      counts.replaceChildren();
+      const head = document.createElement("span"); head.textContent = `${dets.length} found at ≥ ${th.toFixed(2)}:`; counts.appendChild(head);
+      Object.keys(tally).sort((a, b) => tally[b] - tally[a]).forEach(k => {
+        const s = document.createElement("span"), sw = document.createElement("i"); sw.style.background = COLORS[k];
+        s.append(sw, `${NAMES[k]} ${tally[k]}`); counts.appendChild(s);
+      });
+    }
+
+    const HEIC_URL = "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js";
+    const decodeViaImg = blob => new Promise((res, rej) => {
+      const url = URL.createObjectURL(blob), img = new Image();
+      img.onload = () => { URL.revokeObjectURL(url); createImageBitmap(img).then(res, rej); };
+      img.onerror = () => { URL.revokeObjectURL(url); rej(new Error("img")); };
+      img.src = url;
+    });
+    async function decode(blob) {
+      try { return await createImageBitmap(blob, { imageOrientation: "from-image" }); } catch (e) {}
+      try { return await decodeViaImg(blob); } catch (e) {}
+      // Browser can't read it natively (e.g. iPhone HEIC in Chrome): convert it to JPEG first.
+      status.textContent = "Converting your photo to JPEG…";
+      if (!window.heic2any) await loadScript(HEIC_URL);
+      let jpg = await heic2any({ blob, toType: "image/jpeg", quality: 0.9 });
+      if (Array.isArray(jpg)) jpg = jpg[0];
+      return await createImageBitmap(jpg);
+    }
+    async function useBlob(blob) {
+      let im;
+      try { im = await decode(blob); }
+      catch (e) { console.error(e); status.textContent = "Couldn't read or convert that file. Try a different photo."; return; }
+      infer(im);
+    }
+    $("demo-file").addEventListener("change", e => { const f = e.target.files && e.target.files[0]; if (f) useBlob(f); e.target.value = ""; });
+    $("demo-example").addEventListener("click", async () => {
+      status.textContent = "Loading the example photo…";
+      try { useBlob(await (await fetch("trash-example.jpg")).blob()); } catch (e) { status.textContent = "Couldn't load the example photo."; }
+    });
+    conf.addEventListener("input", () => { confVal.textContent = (+conf.value).toFixed(2); draw(); });
+    const close = () => { demo.hidden = true; openBtn.focus(); };
+    openBtn.addEventListener("click", () => { demo.hidden = false; $("demo-close").focus(); getSession().then(() => { if (!bmp) status.textContent = "Model ready."; }).catch(() => { status.textContent = "Sorry, the model couldn't load."; }); });
+    $("demo-close").addEventListener("click", close);
+    addEventListener("keydown", e => { if (e.key === "Escape" && !demo.hidden) close(); });
+  })();
 
   // ---------- 2D text layers: faint stars + ASCII explosions ----------
   const STAR_COL = ["#ffffff", "#dfe1ea", "#c3c6d3", "#9a9eb0"];
