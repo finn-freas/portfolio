@@ -668,8 +668,8 @@ pick a photo of litter, or run the example.</div></div>
     resize(w, h) {
       if (!(w > 40 && h > 40)) return;   // ignore bogus sizes some mobile browsers report mid-animation
       const dpr = Math.min(2, window.devicePixelRatio || 1);
-      this.W = w; this.H = h;
-      this.c.width = Math.max(1, Math.round(w * dpr)); this.c.height = Math.max(1, Math.round(h * dpr));
+      this.W = w; this.H = h; this.dpr = dpr; this.pw = Math.max(1, Math.round(w * dpr)); this.ph = Math.max(1, Math.round(h * dpr));
+      this.c.width = this.pw; this.c.height = this.ph;
       this.g.setTransform(dpr, 0, 0, dpr, 0, 0);
       this.FS = this.o.fs(w);
       this.g.font = `${this.FS}px ${MONO}`; this.g.textAlign = "center"; this.g.textBaseline = "middle";
@@ -690,7 +690,11 @@ pick a photo of litter, or run the example.</div></div>
       this.booms.push({ x, y, s, age: 0, parts: Array.from({ length: n }, () => { const a = rnd(0, 6.283), sp = rnd(50, 290) * s; return { x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: rnd(0.8, 1.7) }; }) });
     }
     frame(t, dt, scroll) {
-      const g = this.g; g.globalAlpha = 1; g.clearRect(0, 0, this.W, this.H);
+      const g = this.g; if (!this.W) return;
+      // phone browsers can silently drop and restore a canvas, wiping its scale and font (stars then bunch in the top-left corner); re-apply both every frame
+      if (this.c.width !== this.pw || this.c.height !== this.ph) { this.c.width = this.pw; this.c.height = this.ph; }
+      g.setTransform(this.dpr, 0, 0, this.dpr, 0, 0); g.font = `${this.FS}px ${MONO}`; g.textAlign = "center"; g.textBaseline = "middle";
+      g.globalAlpha = 1; g.clearRect(0, 0, this.W, this.H);
       for (const s of this.stars) {
         let y = (s.fy * this.H - scroll * s.d * 0.15) % this.H; if (y < 0) y += this.H;
         const a = reduce ? 0.7 : 0.5 + 0.5 * (0.5 + 0.5 * Math.sin(t * s.sp + s.ph));
