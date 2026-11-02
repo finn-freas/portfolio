@@ -98,8 +98,7 @@ section + section { margin-top: 56px; }
 /* divider lines: a 2px rule with a small terminal-style label (~/page, 01, 02 …, EOF) */
 .proj-grid, .exp { counter-reset: e; }
 .entry { counter-increment: e; }
-.nav::after, .entry::after, .footer::before { position: absolute; left: 22px; padding: 0 8px; background: var(--night); font: 400 12px/1 var(--f-mono); color: #6f7280; letter-spacing: 0.04em; pointer-events: none; }
-.nav::after { content: attr(data-path); bottom: calc(1px - 0.5em); }
+.entry::after, .footer::before { position: absolute; left: 22px; padding: 0 8px; background: var(--night); font: 400 12px/1 var(--f-mono); color: #6f7280; letter-spacing: 0.04em; pointer-events: none; }
 .entry::after { content: counter(e, decimal-leading-zero); top: calc(1px - 0.5em); }
 .footer::before { content: "EOF"; top: calc(1px - 0.5em); }
 .entry:last-child { margin-bottom: 0; }
@@ -254,7 +253,7 @@ section + section { margin-top: 56px; }
 <canvas id="fx" aria-hidden="true"></canvas>
 
 <div class="site">
-  <nav class="nav" aria-label="Main navigation" data-path="~/">
+  <nav class="nav" aria-label="Main navigation">
     <a href="#home" class="nav-name">Finn Freas</a>
     <div class="nav-links">
       <a href="#home" data-nav="home">~/</a>
@@ -941,8 +940,7 @@ pick a photo of litter, or run the example.</div></div>
     const changed = next !== view;
     view = next;
     document.getElementById("aside").hidden = view !== "home";
-    document.querySelector(".nav").dataset.path = view === "home" ? "~/" : "~/" + view;
-    document.querySelectorAll("[data-view]").forEach(m => m.hidden = m.dataset.view !== view);
+      document.querySelectorAll("[data-view]").forEach(m => m.hidden = m.dataset.view !== view);
     document.querySelectorAll("[data-nav]").forEach(a => { if (a.dataset.nav === view) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
     if (h === "contact") { requestAnimationFrame(() => document.getElementById("contact").scrollIntoView()); }
     else if (changed) window.scrollTo(0, 0);
