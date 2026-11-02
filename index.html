@@ -641,6 +641,7 @@ pick a photo of litter, or run the example.</div></div>
   class TextLayer {
     constructor(canvas, o) { this.c = canvas; this.g = canvas.getContext("2d"); this.o = o; this.booms = []; this.stars = []; this.W = 0; this.H = 0; this.shooters = []; this.nextShoot = o.shootEvery ? rnd(6, 12) : Infinity; }
     resize(w, h) {
+      if (!(w > 40 && h > 40)) return;   // ignore bogus sizes some mobile browsers report mid-animation
       const dpr = Math.min(2, window.devicePixelRatio || 1);
       this.W = w; this.H = h;
       this.c.width = Math.max(1, Math.round(w * dpr)); this.c.height = Math.max(1, Math.round(h * dpr));
@@ -648,11 +649,13 @@ pick a photo of litter, or run the example.</div></div>
       this.FS = this.o.fs(w);
       this.g.font = `${this.FS}px ${MONO}`; this.g.textAlign = "center"; this.g.textBaseline = "middle";
       this.CW = this.g.measureText("M").width || this.FS * 0.6; this.CH = this.FS * 1.18;
+      // keep existing stars (stored as fractions of the size) so resizes never reshuffle or squash them
       const n = Math.min(this.o.maxStars, Math.round(w * h / this.o.starArea));
-      this.stars = Array.from({ length: n }, () => {
+      while (this.stars.length < n) {
         const r = Math.random();
-        return { x: Math.random() * w, y: Math.random() * h, d: rnd(0.15, 1), ch: r < 0.65 ? "." : r < 0.88 ? "·" : "+", c: pick(STAR_COL), ph: rnd(0, 6.28), sp: rnd(0.4, 1.6) };
-      });
+        this.stars.push({ fx: Math.random(), fy: Math.random(), d: rnd(0.15, 1), ch: r < 0.65 ? "." : r < 0.88 ? "·" : "+", c: pick(STAR_COL), ph: rnd(0, 6.28), sp: rnd(0.4, 1.6) });
+      }
+      if (this.stars.length > n) this.stars.length = n;
     }
     sx(x) { return Math.round(x / this.CW) * this.CW; }
     sy(y) { return Math.round(y / this.CH) * this.CH; }
@@ -664,9 +667,9 @@ pick a photo of litter, or run the example.</div></div>
     frame(t, dt, scroll) {
       const g = this.g; g.globalAlpha = 1; g.clearRect(0, 0, this.W, this.H);
       for (const s of this.stars) {
-        let y = (s.y - scroll * s.d * 0.15) % this.H; if (y < 0) y += this.H;
+        let y = (s.fy * this.H - scroll * s.d * 0.15) % this.H; if (y < 0) y += this.H;
         const a = reduce ? 0.7 : 0.5 + 0.5 * (0.5 + 0.5 * Math.sin(t * s.sp + s.ph));
-        this.put(s.ch, s.x, y, s.c, a * (0.25 + 0.6 * s.d) * this.o.starAlpha);
+        this.put(s.ch, s.fx * this.W, y, s.c, a * (0.25 + 0.6 * s.d) * this.o.starAlpha);
       }
       // shooting stars: one roughly every shootEvery seconds
       const shootView = view === "home" || view === "skills";   // shooting stars on the front page and the Skills page
@@ -810,10 +813,15 @@ pick a photo of litter, or run the example.</div></div>
     three.effect = effect;
     three.camera.aspect = w / h; three.camera.updateProjectionMatrix();
   }
-  function sizeAll() {
-    pageSky.resize(innerWidth, innerHeight);
+  let stageW = 0, stageH = 0;
+  function sizeAll(force) {
+    pageSky.resize(document.documentElement.clientWidth || innerWidth, innerHeight);
     const r = stage.getBoundingClientRect();
-    if (r.width > 1 && r.height > 1) { stageStars.resize(r.width, r.height); stageFx.resize(r.width, r.height); makeEffect(r.width, r.height); }
+    if (!(r.width > 40 && r.height > 40)) return;
+    // only rebuild the artwork when its box really changed size (not when a phone's address bar slides)
+    if (!force && Math.abs(r.width - stageW) < 2 && Math.abs(r.height - stageH) < 2) return;
+    stageW = r.width; stageH = r.height;
+    stageStars.resize(r.width, r.height); stageFx.resize(r.width, r.height); makeEffect(r.width, r.height);
   }
   function renderThree(t) {
     if (!three || !three.effect) return;
@@ -909,7 +917,7 @@ pick a photo of litter, or run the example.</div></div>
     document.querySelectorAll("[data-nav]").forEach(a => { if (a.dataset.nav === view) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
     if (h === "contact") { requestAnimationFrame(() => document.getElementById("contact").scrollIntoView()); }
     else if (changed) window.scrollTo(0, 0);
-    if (view === "home") requestAnimationFrame(() => { sizeAll(); if (reduce) still(); });
+    if (view === "home") requestAnimationFrame(() => { sizeAll(!three || !three.effect); if (reduce) still(); });
     else if (reduce) still();
   }
   addEventListener("hashchange", route);
@@ -922,7 +930,7 @@ pick a photo of litter, or run the example.</div></div>
     three = buildThree();
     if (!three) host.innerHTML = '<div style="display:grid;place-items:center;height:100%;font:13px var(--f-head);color:var(--dim)">The 3D view needs WebGL, which this browser has turned off.</div>';
     route();
-    sizeAll();
+    sizeAll(true);
     if (reduce) still(); else requestAnimationFrame(loop);
   }
   (document.fonts && document.fonts.load ? document.fonts.load('14px "JetBrains Mono"').catch(() => {}) : Promise.resolve()).then(start);
