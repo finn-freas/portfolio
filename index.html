@@ -148,8 +148,9 @@ section + section { margin-top: 56px; }
 .term-bars { margin: 0; white-space: pre; overflow-x: auto; }
 .term-bars .bar { letter-spacing: -1px; }
 /* trash detection live demo */
-.demo-open { margin: 0 0 14px; color: var(--green); border-color: #2c5a3f; }
-.demo-open:hover { color: var(--ink); border-color: var(--green); }
+.demo-open { appearance: none; cursor: pointer; margin: 0 0 16px; display: inline-flex; align-items: center; gap: 10px; font: 400 18px/1 var(--f-body); background: #11131a; color: var(--ink); border: 1px solid #4a4d5a; border-radius: 5px; padding: 11px 16px; transition: border-color .15s, color .15s; }
+.demo-open .g { color: var(--gold); font-family: var(--f-mono); font-size: 15px; }
+.demo-open:hover { border-color: var(--gold); color: #fff; }
 .tdemo { position: fixed; inset: 0; z-index: 25; background: var(--night); overflow-y: auto; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 .demo-inner { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
 .demo-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
@@ -303,7 +304,7 @@ section + section { margin-top: 56px; }
         <div class="project-header"><h3 class="project-title">Trash Detection</h3></div>
         <p class="project-desc">A YOLOv5 model trained to find trash and litter in photos of streets, parks and beaches, with augmentation for rotation, shear, color and noise.</p>
         <img class="result-img" src="trash-detection-results.jpg" alt="Outdoor photo with colored boxes around litter, labeled Plastic, Paper and Cardboard with confidence scores" width="1600" height="1200" loading="lazy">
-        <button class="btn demo-open" type="button" id="demo-open">▶ Try it on your own photo</button>
+        <button class="demo-open" type="button" id="demo-open"><span class="g" aria-hidden="true">↑</span> Try it on your own photo</button>
         <div class="foot">
           <div class="tech"><span class="pill">Python</span><span class="pill">PyTorch</span><span class="pill">YOLOv5</span></div>
         </div>
