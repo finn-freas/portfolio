@@ -48,7 +48,7 @@ a:hover { text-decoration-color: var(--ink); }
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 
 /* nav */
-.nav { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px 20px; padding-block: 28px; margin-bottom: 48px; position: relative; background: linear-gradient(var(--rule), var(--rule)) left bottom / 100% 3px no-repeat; }
+.nav { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px 20px; padding-block: 28px; margin-bottom: 48px; position: relative; background: linear-gradient(var(--rule), var(--rule)) left bottom / 100% 2px no-repeat; }
 .nav-name { font: 700 19px/1 var(--f-mono); color: var(--ink); text-decoration: none; }
 .nav-links { display: flex; flex-wrap: wrap; gap: 6px 20px; }
 .nav-links a { font: 400 14.5px/1 var(--f-mono); color: var(--dim); text-decoration: none; padding: 4px 0; border-bottom: 2px solid transparent; }
@@ -86,7 +86,7 @@ section + section { margin-top: 56px; }
 .art-caption small { display: block; margin-top: 4px; font-size: 12px; color: #55565f; }
 
 .contact p { margin: 0 0 14px; font-size: 18px; line-height: 1.65; }
-.aside { margin: 10px 0 0 !important; font: 400 12px/1.4 var(--f-mono) !important; color: #55565f; }
+.aside { display: block; margin-top: 4px; font: 400 11px/1.4 var(--f-mono); color: #55565f; }
 .mail { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
 .addr { font: 500 18px/1.3 var(--f-head); color: var(--ink); user-select: all; word-break: break-all; }
 .btn { appearance: none; border: 1px solid var(--line); background: none; color: var(--dim); font: 400 13px/1 var(--f-head); padding: 8px 12px; border-radius: 4px; cursor: pointer; }
@@ -94,15 +94,15 @@ section + section { margin-top: 56px; }
 .copied { font: 400 13px/1 var(--f-head); color: var(--green); }
 
 /* entries (projects + experience) */
-.entry { margin-bottom: 36px; padding-bottom: 36px; position: relative; background: linear-gradient(var(--rule), var(--rule)) left bottom / 100% 3px no-repeat; }
-/* divider lines: a 3px rule with a + at each end */
-.nav::before, .nav::after, .entry::before, .entry::after, .footer::before, .footer::after { content: "+"; position: absolute; font: 500 17px/1 var(--f-mono); color: #8a8d9a; pointer-events: none; }
-.nav::before, .entry::before, .footer::before { left: -0.3em; }
-.nav::after, .entry::after, .footer::after { right: -0.3em; }
-.nav::before, .nav::after, .entry::before, .entry::after { bottom: -0.44em; }
-.footer::before, .footer::after { top: -0.27em; }
-.entry:last-child { background: none; margin-bottom: 0; padding-bottom: 0; }
-.entry:last-child::before, .entry:last-child::after { content: none; }
+.entry { margin-bottom: 40px; padding-top: 34px; position: relative; background: linear-gradient(var(--rule), var(--rule)) left top / 100% 2px no-repeat; }
+/* divider lines: a 2px rule with a small terminal-style label (~/page, 01, 02 …, EOF) */
+.proj-grid, .exp { counter-reset: e; }
+.entry { counter-increment: e; }
+.nav::after, .entry::after, .footer::before { position: absolute; left: 22px; padding: 0 8px; background: var(--night); font: 400 12px/1 var(--f-mono); color: #6f7280; letter-spacing: 0.04em; pointer-events: none; }
+.nav::after { content: attr(data-path); bottom: calc(1px - 0.5em); }
+.entry::after { content: counter(e, decimal-leading-zero); top: calc(1px - 0.5em); }
+.footer::before { content: "EOF"; top: calc(1px - 0.5em); }
+.entry:last-child { margin-bottom: 0; }
 .project-header { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; margin-bottom: 6px; }
 .project-title { margin: 0; font: 600 17px/1.45 var(--f-head); color: var(--ink); }
 .highlight { font: 500 13px/1.4 var(--f-head); color: var(--green); }
@@ -126,6 +126,8 @@ section + section { margin-top: 56px; }
 .poster img { display: block; width: 100%; height: auto; max-width: 100%; }
 .poster span { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 10px; font: 400 13px/1 var(--f-head); color: var(--ink); background: linear-gradient(transparent, rgba(0,0,0,0.85)); text-align: left; }
 .poster:hover { border-color: var(--faint); }
+.project-media { margin-bottom: 14px; }
+.project-media .result-img { margin-bottom: 12px; }
 .result-img { display: block; width: min(360px, 100%); height: auto; margin: 4px 0 14px; border: 1px solid var(--line); border-radius: 6px; }
 .lightbox { position: fixed; inset: 0; z-index: 20; background: rgba(5, 6, 10, 0.94); display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); cursor: zoom-out; }
 .lightbox figure { margin: 0; display: flex; flex-direction: column; gap: 10px; max-width: min(1100px, 100%); }
@@ -196,7 +198,7 @@ section + section { margin-top: 56px; }
 .awards li { margin-bottom: 8px; font: 400 14.5px/1.7 var(--f-mono); color: #cfcdd6; }
 .awards li::marker { color: var(--gold); }
 
-.footer { margin-top: 80px; padding-top: 24px; position: relative; background: linear-gradient(var(--rule), var(--rule)) left top / 100% 3px no-repeat; text-align: center; font: 400 13px/1.5 var(--f-head); color: var(--faint); }
+.footer { margin-top: 80px; padding-top: 24px; position: relative; background: linear-gradient(var(--rule), var(--rule)) left top / 100% 2px no-repeat; text-align: center; font: 400 13px/1.5 var(--f-head); color: var(--faint); }
 
 
 /* desktop: use the full width */
@@ -213,9 +215,14 @@ section + section { margin-top: 56px; }
   h1 { font-size: 40px; }
   [data-view="home"] h1 { font-size: 48px; }
   .contact p { max-width: 70ch; }
-  .proj-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 64px; }
-  .proj-grid .entry, .proj-grid .entry:last-child { margin-bottom: 40px; padding-bottom: 40px; background: linear-gradient(var(--rule), var(--rule)) left bottom / 100% 3px no-repeat; }
-  .proj-grid .entry:last-child::before, .proj-grid .entry:last-child::after { content: "+"; }
+  .proj-grid .entry { display: grid; grid-template-columns: 300px minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: 56px; align-items: start; }
+  .proj-grid .project-header { grid-column: 1; grid-row: 1; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .proj-grid .project-media { grid-column: 1; grid-row: 2; margin: 14px 0 0; }
+  .proj-grid .project-media .result-img { width: 100%; }
+  .proj-grid .project-body { grid-column: 2; grid-row: 1 / span 2; }
+  .proj-grid .project-desc { max-width: 78ch; }
+  .proj-grid .cmdline { max-width: 640px; }
+  .proj-grid .entry, .proj-grid .entry:last-child { margin-bottom: 40px; }
   .exp .entry { display: grid; grid-template-columns: 300px minmax(0, 1fr); column-gap: 56px; }
   .exp .entry > .entry-header { grid-column: 1; grid-row: 1 / span 6; flex-direction: column; justify-content: flex-start; align-self: start; gap: 6px; margin: 0; }
   .exp .entry > :not(.entry-header) { grid-column: 2; }
@@ -247,7 +254,7 @@ section + section { margin-top: 56px; }
 <canvas id="fx" aria-hidden="true"></canvas>
 
 <div class="site">
-  <nav class="nav" aria-label="Main navigation">
+  <nav class="nav" aria-label="Main navigation" data-path="~/">
     <a href="#home" class="nav-name">Finn Freas</a>
     <div class="nav-links">
       <a href="#home" data-nav="home">~/</a>
@@ -294,7 +301,6 @@ section + section { margin-top: 56px; }
         <button class="btn" id="copy-mail" type="button">Copy email</button>
         <span class="copied" id="copied" role="status"></span>
       </div>
-      <p class="aside">(space is so cool)</p>
     </section>
   </main>
 
@@ -304,37 +310,47 @@ section + section { margin-top: 56px; }
     <section class="proj-grid" style="margin-top:32px">
       <div class="entry">
         <div class="project-header"><h3 class="project-title">INT8 Neural-Network Chip on a $50 FPGA</h3></div>
-        <p class="project-desc">An INT8 neural-network accelerator and compiler I designed, running the MLPerf Tiny person-detection model on a Tang Nano 20K FPGA. Its output matches TFLite's int8 results exactly on every tested image.</p>
-        <div class="foot">
-          <div class="tech"><span class="pill">SystemVerilog</span><span class="pill">Python</span><span class="pill">Yosys</span><span class="pill">Verilator</span></div>
+        <div class="project-body">
+          <p class="project-desc">An INT8 neural-network accelerator and compiler I designed, running the MLPerf Tiny person-detection model on a Tang Nano 20K FPGA. Its output matches TFLite's int8 results exactly on every tested image.</p>
+          <div class="foot">
+            <div class="tech"><span class="pill">SystemVerilog</span><span class="pill">Python</span><span class="pill">Yosys</span><span class="pill">Verilator</span></div>
+          </div>
+          <div class="cmdline"><a class="cmd" href="https://github.com/finn-freas/deployed-cnn-fpga" target="_blank" rel="noopener">git clone https://github.com/finn-freas/deployed-cnn-fpga</a><button type="button" class="cp" data-copy="git clone https://github.com/finn-freas/deployed-cnn-fpga">copy</button></div>
         </div>
-        <div class="cmdline"><a class="cmd" href="https://github.com/finn-freas/deployed-cnn-fpga" target="_blank" rel="noopener">git clone https://github.com/finn-freas/deployed-cnn-fpga</a><button type="button" class="cp" data-copy="git clone https://github.com/finn-freas/deployed-cnn-fpga">copy</button></div>
       </div>
 
       <div class="entry">
         <div class="project-header"><h3 class="project-title">Trash Detection</h3></div>
-        <p class="project-desc">A YOLOv5 model trained to find trash and litter in photos of streets, parks and beaches, with augmentation for rotation, shear, color and noise.</p>
-        <img class="result-img" src="trash-detection-results.jpg" alt="Outdoor photo with colored boxes around litter, labeled Plastic, Paper and Cardboard with confidence scores" width="1600" height="1200" loading="lazy">
-        <button class="demo-open" type="button" id="demo-open"><span class="g" aria-hidden="true">↑</span> Try it on your own photo</button>
-        <div class="foot">
-          <div class="tech"><span class="pill">Python</span><span class="pill">PyTorch</span><span class="pill">YOLOv5</span></div>
+        <div class="project-media">
+          <img class="result-img" src="trash-detection-results.jpg" alt="Outdoor photo with colored boxes around litter, labeled Plastic, Paper and Cardboard with confidence scores" width="1600" height="1200" loading="lazy">
+          <button class="demo-open" type="button" id="demo-open"><span class="g" aria-hidden="true">↑</span> Try it on your own photo</button>
         </div>
-        <div class="cmdline"><a class="cmd" href="https://github.com/finn-freas/Trash_Detection" target="_blank" rel="noopener">git clone https://github.com/finn-freas/Trash_Detection</a><button type="button" class="cp" data-copy="git clone https://github.com/finn-freas/Trash_Detection">copy</button></div>
+        <div class="project-body">
+          <p class="project-desc">A YOLOv5 model I trained to find litter in photos of outside environments, and sort it into 8 types: cardboard, coffee cups, glass, masks, metal, paper, plastic and Styrofoam. It was trained on 9,424 images, several hundred of which I went out and took myself (including the example one you're looking at!). Each training image was expanded into three augmented copies with flips, rotation, shear, color shifts, blur and noise, so it holds up across angles and lighting. It reached 0.72 mAP@0.5 on its validation set, and a compressed version runs in the browser, so you can try it on your own photo.</p>
+          <div class="foot">
+            <div class="tech"><span class="pill">Python</span><span class="pill">PyTorch</span><span class="pill">YOLOv5</span></div>
+          </div>
+          <div class="cmdline"><a class="cmd" href="https://github.com/finn-freas/Trash_Detection" target="_blank" rel="noopener">git clone https://github.com/finn-freas/Trash_Detection</a><button type="button" class="cp" data-copy="git clone https://github.com/finn-freas/Trash_Detection">copy</button></div>
+        </div>
       </div>
 
       <div class="entry">
         <div class="project-header"><h3 class="project-title">Calculator-to-Radio Long-Range Module</h3><span class="highlight">Texas Instruments Coding Competition Top 10</span></div>
-        <p class="project-desc">Long-range wireless messaging on a Texas Instruments graphing calculator. Software in Assembly and Python drives a radio module over UART, inside a 3D-printed case.</p>
-        <div class="foot">
-          <div class="tech"><span class="pill">Assembly</span><span class="pill">Python</span><span class="pill">UART</span><span class="pill">Fusion 360</span></div>
+        <div class="project-body">
+          <p class="project-desc">Long-range wireless messaging on a Texas Instruments graphing calculator. Software in Assembly and Python drives a radio module over UART, inside a 3D-printed case.</p>
+          <div class="foot">
+            <div class="tech"><span class="pill">Assembly</span><span class="pill">Python</span><span class="pill">UART</span><span class="pill">Fusion 360</span></div>
+          </div>
         </div>
       </div>
 
       <div class="entry">
         <div class="project-header"><h3 class="project-title">Line-Following Rover with Robotic Arm</h3><span class="highlight">Texas Instruments Coding Competition Top 10</span></div>
-        <p class="project-desc">Led a team of 5. I designed the robotic arm in Fusion 360 and programmed the autonomous line-following rover to transport paper between locations.</p>
-        <div class="foot">
-          <div class="tech"><span class="pill">Python</span><span class="pill">C++</span><span class="pill">Servo control</span><span class="pill">Fusion 360</span></div>
+        <div class="project-body">
+          <p class="project-desc">Led a team of 5. I designed the robotic arm in Fusion 360 and programmed the autonomous line-following rover to transport paper between locations.</p>
+          <div class="foot">
+            <div class="tech"><span class="pill">Python</span><span class="pill">C++</span><span class="pill">Servo control</span><span class="pill">Fusion 360</span></div>
+          </div>
         </div>
       </div>
 
@@ -428,7 +444,7 @@ section + section { margin-top: 56px; }
     </section>
   </main>
 
-  <footer class="footer">© 2026 Finn Freas</footer>
+  <footer class="footer">© 2026 Finn Freas<span class="aside" id="aside">(If I was tall enough I'd be an astronaut)</span></footer>
 </div>
 
 <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Research poster">
@@ -924,6 +940,8 @@ pick a photo of litter, or run the example.</div></div>
     let next = VIEWS.includes(h) ? h : "home";
     const changed = next !== view;
     view = next;
+    document.getElementById("aside").hidden = view !== "home";
+    document.querySelector(".nav").dataset.path = view === "home" ? "~/" : "~/" + view;
     document.querySelectorAll("[data-view]").forEach(m => m.hidden = m.dataset.view !== view);
     document.querySelectorAll("[data-nav]").forEach(a => { if (a.dataset.nav === view) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
     if (h === "contact") { requestAnimationFrame(() => document.getElementById("contact").scrollIntoView()); }
