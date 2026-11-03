@@ -308,13 +308,24 @@ section + section { margin-top: 56px; }
     <h1>Projects</h1>
     <section class="proj-grid" style="margin-top:32px">
       <div class="entry">
+        <div class="project-header"><h3 class="project-title">Roast Bot: a Chat Model on a $50 FPGA</h3></div>
+        <div class="project-body">
+          <p class="project-desc">A chatbot that roasts you, running entirely on a Tang Nano 20K FPGA. It's a 16-layer, 12-million-parameter language model that I trained and then built the hardware for. Every layer, the attention, the chat memory, picking each word and choosing the best of 6 replies all happen on the FPGA with integer-only math, and the laptop just sends your message over USB. The model fills the board's whole 8 MB of memory, a reply takes about 4.8 seconds, and the board's output matches a Python model of the hardware bit for bit.</p>
+          <div class="foot">
+            <div class="tech"><span class="pill">SystemVerilog</span><span class="pill">Python</span><span class="pill">PyTorch</span><span class="pill">Yosys</span><span class="pill">Verilator</span><span class="pill">cocotb</span></div>
+          </div>
+          <div class="cmdline"><a class="cmd" href="https://github.com/finn-freas/roastbot-fpga" target="_blank" rel="noopener">git clone https://github.com/finn-freas/roastbot-fpga</a><button type="button" class="cp" data-copy="git clone https://github.com/finn-freas/roastbot-fpga">copy</button></div>
+        </div>
+      </div>
+
+      <div class="entry">
         <div class="project-header"><h3 class="project-title">INT8 Neural-Network Chip on a $50 FPGA</h3></div>
         <div class="project-body">
-          <p class="project-desc">An INT8 neural-network accelerator and compiler I designed, running the MLPerf Tiny person-detection model on a Tang Nano 20K FPGA. Its output matches TFLite's int8 results exactly on every tested image.</p>
+          <p class="project-desc">An INT8 neural-network accelerator and compiler I designed, running the MLPerf Tiny person-detection model on a Tang Nano 20K FPGA. Its output matches TFLite's int8 results exactly on every tested image. Its code is kept at the commit below, from before the repository became the roast bot.</p>
           <div class="foot">
             <div class="tech"><span class="pill">SystemVerilog</span><span class="pill">Python</span><span class="pill">Yosys</span><span class="pill">Verilator</span></div>
           </div>
-          <div class="cmdline"><a class="cmd" href="https://github.com/finn-freas/deployed-cnn-fpga" target="_blank" rel="noopener">git clone https://github.com/finn-freas/deployed-cnn-fpga</a><button type="button" class="cp" data-copy="git clone https://github.com/finn-freas/deployed-cnn-fpga">copy</button></div>
+          <div class="cmdline"><a class="cmd" href="https://github.com/finn-freas/roastbot-fpga/tree/86179fda58a9f19b395c700e62f93c702b9bc95c" target="_blank" rel="noopener">github.com/finn-freas/roastbot-fpga/tree/86179fd</a><button type="button" class="cp" data-copy="https://github.com/finn-freas/roastbot-fpga/tree/86179fda58a9f19b395c700e62f93c702b9bc95c">copy</button></div>
         </div>
       </div>
 
