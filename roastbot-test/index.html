@@ -31,7 +31,8 @@ input { flex: 1; min-width: 0; background: none; border: 0; outline: 0; color: v
   <div class="bar">finnfreas.com: ~/roastbot-test</div>
   <div class="body">
     <p><span class="ps">$</span> <span class="cmd">./chat.sh --device your-browser</span></p>
-    <p class="cm" id="note"># test page, not linked from the site. add ?seed=1 to the address to get the same replies as ./chat.sh.</p>
+    <p class="cm" id="note"># test page, not linked from the site. each visit picks a random seed, like ./chat.sh --seed random. add ?seed=N to the address to pick one.</p>
+    <p class="cm" id="seed"></p>
     <p class="status" id="status" aria-live="polite"></p>
     <div class="log" id="log" aria-live="polite"></div>
     <form id="form" autocomplete="off">
@@ -62,7 +63,7 @@ input { flex: 1; min-width: 0; background: none; border: 0; outline: 0; color: v
   const worker = new Worker("roastbot-worker.js");
   worker.onmessage = ({ data: m }) => {
     if (m.type === "progress") status.textContent = `> loading the model… ${Math.round(m.frac * 100)}%`;
-    else if (m.type === "ready") { ready = true; status.textContent = m.seed == null ? "> model loaded (random seed). say something." : `> model loaded (seed ${m.seed}). say something.`; setBusy(false); }
+    else if (m.type === "ready") { ready = true; $("seed").textContent = `seed ${m.seed}: replay this chat with ./chat.sh --seed ${m.seed}`; status.textContent = "> model loaded. say something."; setBusy(false); }
     else if (m.type === "reply") {
       m.texts.forEach((t) => line("bot", "roast bot", t));
       line("meta", "", `  [${m.tokens} tokens, ${(m.ms / 1000).toFixed(1)} s in your browser]`);

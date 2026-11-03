@@ -23,7 +23,7 @@ async function fetchWithProgress(url, total, onFrac) {
 }
 
 function newRng() {
-  return makeRng(seed == null ? (Math.random() * 4294967296) >>> 0 : seed);
+  return makeRng(seed);
 }
 
 async function load() {
@@ -41,7 +41,7 @@ let ready = null;
 onmessage = async (ev) => {
   const msg = ev.data;
   if (msg.type === "init") {
-    seed = msg.seed == null ? null : msg.seed >>> 0;
+    seed = msg.seed == null ? crypto.getRandomValues(new Uint32Array(1))[0] % 1000000 : msg.seed >>> 0;
     ready = load().catch((e) => postMessage({ type: "error", message: String(e && e.message || e) }));
     return;
   }
