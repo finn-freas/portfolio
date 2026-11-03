@@ -60,7 +60,7 @@ input { flex: 1; min-width: 0; background: none; border: 0; outline: 0; color: v
   };
   const setBusy = (v) => { busy = v; input.disabled = send.disabled = !ready || v; if (!v && ready) input.focus(); };
   status.textContent = "> loading the model…";
-  const worker = new Worker("roastbot-worker.js");
+  const worker = new Worker("../roastbot/roastbot-worker.js");
   worker.onmessage = ({ data: m }) => {
     if (m.type === "progress") status.textContent = `> loading the model… ${Math.round(m.frac * 100)}%`;
     else if (m.type === "ready") { ready = true; $("seed").textContent = `seed ${m.seed}: replay this chat with ./chat.sh --seed ${m.seed}`; status.textContent = "> model loaded. say something."; setBusy(false); }

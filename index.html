@@ -177,6 +177,17 @@ section + section { margin-top: 56px; }
 .demo-empty { font: 400 14px/1.6 var(--f-mono); color: var(--faint); text-align: center; padding: 40px 20px; }
 .demo-status { margin: 0; font: 400 13px/1.6 var(--f-mono); color: var(--dim); min-height: 1.6em; }
 .demo-counts { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 400 13.5px/1.6 var(--f-mono); color: var(--body); }
+/* roast bot chat */
+.rb-log { display: flex; flex-direction: column; gap: 8px; min-height: 220px; max-height: 56vh; overflow-y: auto; padding: 12px 14px; background: #000; border: 1px dashed #2a2c36; font: 400 13.5px/1.6 var(--f-mono); color: var(--body); overflow-wrap: anywhere; }
+.rb-log p { margin: 0; white-space: pre-wrap; }
+.rb-log .you { color: var(--ink); } .rb-log .you b { color: #6bc4e3; font-weight: 400; }
+.rb-log .bot b { color: var(--gold); font-weight: 400; }
+.rb-log .meta { color: var(--faint); font-size: 12px; }
+.rb-form { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 5px; padding: 8px 12px; background: #0d0e14; }
+.rb-form label { font: 400 13.5px/1 var(--f-mono); color: #6bc4e3; }
+.rb-form input { flex: 1; min-width: 0; background: none; border: 0; outline: 0; color: var(--ink); font: 400 16px/1.4 var(--f-mono); }
+.rb-form:focus-within { border-color: var(--green); }
+.rb-form .tb:disabled { color: var(--faint); cursor: default; }
 .demo-counts i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
 .lb-close { position: absolute; top: max(16px, env(safe-area-inset-top, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); appearance: none; background: none; border: 1px solid var(--line); color: var(--ink); font: 400 13px/1 var(--f-head); padding: 9px 12px; border-radius: 4px; cursor: pointer; }
 
@@ -310,6 +321,7 @@ section + section { margin-top: 56px; }
       <div class="entry">
         <div class="project-header"><h3 class="project-title">Roast Bot: a Chat Model on a $50 FPGA</h3></div>
         <div class="project-body">
+          <button class="demo-open" type="button" id="rb-open"><span class="g" aria-hidden="true">&gt;</span> Talk to it</button>
           <p class="project-desc">A chatbot that roasts you, running entirely on a Tang Nano 20K FPGA. It's a 16-layer, 12-million-parameter language model that I trained and then built the hardware for. Every layer, the attention, the chat memory, picking each word and choosing the best of 6 replies all happen on the FPGA with integer-only math, and the laptop just sends your message over USB. The model fills the board's whole 8 MB of memory, a reply takes about 4.8 seconds, and the board's output matches a Python model of the hardware bit for bit.</p>
           <div class="foot">
             <div class="tech"><span class="pill">SystemVerilog</span><span class="pill">Python</span><span class="pill">PyTorch</span><span class="pill">Yosys</span><span class="pill">Verilator</span><span class="pill">cocotb</span></div>
@@ -462,6 +474,25 @@ section + section { margin-top: 56px; }
     <figcaption id="lb-cap">The Effect of Retrospective Image Harmonization on Multi-Center Multiple Sclerosis Lesion Segmentation</figcaption>
   </figure>
   <button type="button" class="lb-close" id="lb-close">Close ✕</button>
+</div>
+
+<div class="tdemo" id="rb" hidden role="dialog" aria-modal="true" aria-labelledby="rb-title">
+  <div class="term">
+    <div class="term-bar"><span class="t" id="rb-title">finn@finnfreas.com: ~/roastbot-fpga</span><button type="button" class="term-x" id="rb-close">esc ✕</button></div>
+    <div class="term-body">
+      <p><span class="ps">$</span> <span class="cmd">./chat.sh --device your-browser</span></p>
+      <p class="cm"># the same integer math as the FPGA, running on this page. it writes 6 replies and keeps the best one, so each takes a few seconds. it swears a lot.</p>
+      <p class="cm" id="rb-seed"></p>
+      <p class="term-log" id="rb-status" aria-live="polite"></p>
+      <div class="rb-log" id="rb-log" aria-live="polite"></div>
+      <form class="rb-form" id="rb-form" autocomplete="off">
+        <label for="rb-input">you&gt;</label>
+        <input id="rb-input" type="text" maxlength="280" placeholder="say something" enterkeyhint="send" disabled>
+        <button type="submit" class="tb" id="rb-send" disabled>send</button>
+      </form>
+      <div class="term-ctrl"><button type="button" class="tb" id="rb-reset">/reset</button></div>
+    </div>
+  </div>
 </div>
 
 <div class="tdemo" id="demo" hidden role="dialog" aria-modal="true" aria-labelledby="demo-title">
@@ -668,6 +699,56 @@ pick a photo of litter, or run the example.</div></div>
     openBtn.addEventListener("click", () => { demo.hidden = false; $("demo-close").focus(); getSession().then(() => { if (!bmp) status.textContent = "> model loaded. waiting for input."; }).catch(() => { status.textContent = "Sorry, the model couldn't load."; }); });
     $("demo-close").addEventListener("click", close);
     addEventListener("keydown", e => { if (e.key === "Escape" && !demo.hidden) close(); });
+  })();
+
+  // ---------- roast bot chat (the board's integer math, in a web worker) ----------
+  (() => {
+    const $ = id => document.getElementById(id);
+    const box = $("rb"), openBtn = $("rb-open"), log = $("rb-log"), status = $("rb-status");
+    const form = $("rb-form"), input = $("rb-input"), send = $("rb-send");
+    let worker = null, ready = false, busy = false;
+    const line = (cls, who, text) => {
+      const p = document.createElement("p");
+      p.className = cls;
+      if (who) { const b = document.createElement("b"); b.textContent = who + "> "; p.append(b); }
+      p.append(document.createTextNode(text));
+      log.append(p);
+      log.scrollTop = log.scrollHeight;
+    };
+    const setBusy = v => { busy = v; input.disabled = send.disabled = !ready || v; if (!v && ready) input.focus(); };
+    const start = () => {
+      if (worker) return;
+      status.textContent = "> downloading the model (7 MB)…";
+      worker = new Worker("roastbot/roastbot-worker.js");
+      worker.onmessage = ({ data: m }) => {
+        if (m.type === "progress") status.textContent = `> downloading the model… ${Math.round(m.frac * 100)}%`;
+        else if (m.type === "ready") { ready = true; $("rb-seed").textContent = `# seed ${m.seed}: the same chat replays with ./chat.sh --seed ${m.seed}`; status.textContent = "> model loaded. say something."; setBusy(false); }
+        else if (m.type === "reply") {
+          m.texts.forEach(t => line("bot", "roast bot", t));
+          line("meta", "", `  [${m.tokens} tokens, ${(m.ms / 1000).toFixed(1)} s in your browser]`);
+          status.textContent = "";
+          setBusy(false);
+        } else if (m.type === "reset") { log.textContent = ""; status.textContent = "> conversation cleared."; setBusy(false); }
+        else if (m.type === "error") { status.textContent = "Sorry, something went wrong: " + m.message; setBusy(false); }
+      };
+      worker.onerror = () => { status.textContent = "Sorry, the roast bot couldn't start in this browser."; };
+      worker.postMessage({ type: "init", seed: null });
+    };
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text || !ready || busy) return;
+      line("you", "you", text);
+      input.value = "";
+      status.textContent = "> roast bot is typing…";
+      setBusy(true);
+      worker.postMessage({ type: "say", text });
+    });
+    $("rb-reset").addEventListener("click", () => { if (ready && !busy) { setBusy(true); worker.postMessage({ type: "reset" }); } });
+    const close = () => { box.hidden = true; openBtn.focus(); };
+    openBtn.addEventListener("click", () => { box.hidden = false; start(); (ready ? input : $("rb-close")).focus(); });
+    $("rb-close").addEventListener("click", close);
+    addEventListener("keydown", e => { if (e.key === "Escape" && !box.hidden) close(); });
   })();
 
   // ---------- 2D text layers: faint stars + ASCII explosions ----------
