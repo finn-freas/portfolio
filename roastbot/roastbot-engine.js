@@ -121,7 +121,7 @@ class IntModel {
     }
   }
 
-  forward(tok, pos) {
+  forward(tok, pos, base = 0) {
     const p = this.p, c = p.cfg, f = p.fmt, K = p.K;
     const hs = c.head_size, rep = c.n_heads / c.n_kv_heads, kvd = c.kv_dim, D = c.dim;
     const tShift = f.q + f.k - K.F_T, hShift = 2 * f.h - f.hb;
@@ -149,7 +149,7 @@ class IntModel {
         const kvOff = Math.floor(h / rep) * hs, qOff = h * hs;
         const tt = this.tt, e = this.e;
         let tmax = -Infinity;
-        for (let j = 0; j <= pos; j++) {
+        for (let j = base; j <= pos; j++) {
           let dot = 0;
           const ko = lb + j * kvd + kvOff;
           for (let i = 0; i < hs; i++) dot += this.kc[ko + i] * q[qOff + i];
@@ -159,7 +159,7 @@ class IntModel {
           if (t > tmax) tmax = t;
         }
         let total = 0;
-        for (let j = 0; j <= pos; j++) {
+        for (let j = base; j <= pos; j++) {
           const d = tmax - tt[j], ip = d >> 8, fp = d & 255;
           const ev = ip >= 16 ? 0 : (p.exp2[fp] >> Math.min(ip, 15));
           e[j] = ev; total += ev;
@@ -167,7 +167,7 @@ class IntModel {
         const half = Math.floor(total / 2);
         for (let i = 0; i < hs; i++) {
           let out = 0;
-          for (let j = 0; j <= pos; j++) if (e[j]) out += e[j] * this.vc[lb + j * kvd + kvOff + i];
+          for (let j = base; j <= pos; j++) if (e[j]) out += e[j] * this.vc[lb + j * kvd + kvOff + i];
           const qq = Math.floor((Math.abs(out) * P2[sv] + half) / total);
           att[qOff + i] = out < 0 ? -qq : qq;
         }
@@ -285,6 +285,10 @@ const AGGRO = new RegExp(WB + "(fuck|f\\*ck|fk|stfu|shut (up|it)|hate|stupid|dum
   "cringe|mid|lame|weak|garbage|go away|stop talking|screw|unplug|fry|beat you|not funny|" +
   "(just|only|a|little|lil|dumb|stupid) (a )?bot|toaster|calculator|ratio|my mom|my mama|my moms|" +
   "ur mom|your mom|yo mama)" + WE, "iu");
+const BLOCK = new RegExp("n[i1!]gg|f[a@]gg?[o0]t|" + WB + "f[a@]g" + WE + "|retard|tr[a@]nn|ch[i1]nk|" + WB + "sp[i1]c" + WE +
+  "|k[i1]ke|dyke|g[o0][o0]k|wetback|beaner|kill (yo)?ur ?self|suicid|" + WB + "kys" + WE + "|" + WB + "unalive|" + WB +
+  "(gay|lesbian|homo|queer|trans|black|white|asian|chinese|mexican|indian|arab|jew|muslim|christian|african|latin|" +
+  "immigrant|autis|down syndrome|disabled|rape)[\\p{L}\\p{N}_]*", "iu");
 
 class Person {
   constructor(p, tok) {
@@ -298,7 +302,7 @@ class Person {
   }
   reset() {
     this.said = []; this.botMsgs = 0; this.botEmoji = 0; this.botMass = [];
-    this.m.reset(); this.hist = []; this.pos = 0; this.last = null;
+    this.m.reset(); this.base = 0; this.hist = []; this.pos = 0; this.last = null;
   }
   emojiGain(emoji) {
     const C = this.C, scale = Math.pow(2 * Math.max(0, emoji), 2);
@@ -335,10 +339,17 @@ class Person {
     this.wq = w;
   }
   feed(ids) {
-    for (const t of ids) { this.last = this.m.forward(t, this.pos); this.hist.push(t); this.pos++; }
+    for (const t of ids) { this.last = this.m.forward(t, this.pos, this.base); this.hist.push(t); this.pos++; }
   }
   settings(invT, cutQ, gainQ, rng) { this.invT = invT; this.cutQ = cutQ; this.gainQ = gainQ; this.rng = rng; }
-  rewind(pos) { this.pos = pos; this.hist.length = pos; }
+  rewind(pos) { this.pos = pos; if (this.hist.length > pos) this.hist.length = pos; }
+  skip(toks) { for (const t of toks) this.hist.push(t); this.pos += toks.length; }
+  window(base) { this.base = base; }
+  scoreAfter(t, nxt) {
+    this.feed([t]);
+    const [em, total] = classMass(this.p, this.last, this.EMOJI);
+    return [nxt, em, total, tokenScore(this.p, this.last, nxt, total, this.wq)];
+  }
   step(t) {
     this.feed([t]);
     const [em, total] = classMass(this.p, this.last, this.EMOJI);
@@ -357,7 +368,7 @@ class Person {
   }
   makeRoom(need) {
     const C = this.C;
-    if (this.pos + need <= this.p.cfg.seq_len) return;
+    if (this.pos + need <= C.NULL_BASE) return;
     const h = this.hist;
     const cut = [];
     for (let i = 0; i < h.length; i++) if ((h[i] === C.YOU || h[i] === C.HIM) && h.length - i <= C.KEEP) cut.push(i);
@@ -377,6 +388,7 @@ function loops(p, toks) {
   return false;
 }
 
+function blocked(tok, toks) { return BLOCK.test(tok.decode(toks)); }
 function hasMom(tok, toks) { return MOM.test(tok.decode(toks).toLowerCase()); }
 function momBad(person, tok, toks, text) {
   const said = (t) => MOM.test(tok.decode(t).toLowerCase());
@@ -396,24 +408,32 @@ function replyBest(person, tok, text, temp, cut, rng, emoji, nBest, budget) {
   person.feed(ids.slice(0, -1));
   const p0 = person.pos;
   person.bestReset();
-  const cands = [], moms = [], means = new Map();
+  const cands = [], moms = [], means = new Map(), sums = new Map();
   let used = 0, last = -1, win = 0;
-  for (let k = 0; k < nBest; k++) {
-    if (k && used > budget - C.BEST_RESERVE) break;
+  const noMom = !AGGRO.test(text.split("’").join("'")) || person.said.slice(-C.MOM_GAP).some((r) => hasMom(tok, r));
+  const starts = C.MOM_START;
+  const force = noMom || !starts || !starts.length ? [] : tok.encode(starts[person.botMsgs % starts.length]);
+  for (let k = 0; k < nBest + C.BEST_EXTRA; k++) {
+    const lim = means.size || !k ? budget : budget + C.BEST_EXTRA_BUDGET;
+    if ((k >= nBest && means.size) || (k && used > lim - C.BEST_RESERVE)) break;
     person.rewind(p0);
-    let [nxt, em, total, sc] = person.step(C.HIM);
-    const fed = [], msgs = [], mass = [];
+    const queue = k === 0 ? force.slice() : [];
+    let [nxt, em, total, sc] = queue.length ? person.scoreAfter(C.HIM, queue.shift()) : person.step(C.HIM);
+    const fed = [], msgs = [], mass = [], scored = [];
     let cur = [], n = 0, prev = C.HIM, curMass = 0, ok = true;
     while (n < C.MAX_REPLY) {
       if (!E[prev]) curMass += em / Math.max(total, 1);
       person.score(sc);
+      scored.push(nxt);
       n++;
-      if (used + n > budget) { ok = false; break; }
+      if (used + n > lim) { ok = false; break; }
       if (nxt === C.YOU || nxt === C.BOS || nxt === C.PAD) break;
       prev = nxt;
       fed.push(nxt);
+      if (noMom && hasMom(tok, fed.slice(-4))) { ok = false; break; }
       let following = null;
-      if (n < C.MAX_REPLY) following = person.step(nxt); else person.feed([nxt]);
+      if (n < C.MAX_REPLY) following = queue.length ? person.scoreAfter(nxt, queue.shift()) : person.step(nxt);
+      else person.feed([nxt]);
       if (nxt === C.HIM) { msgs.push(cur); mass.push(curMass); cur = []; curMass = 0; }
       else cur.push(nxt);
       if (n < C.MAX_REPLY) [nxt, em, total, sc] = following;
@@ -421,11 +441,36 @@ function replyBest(person, tok, text, temp, cut, rng, emoji, nBest, budget) {
     msgs.push(cur); mass.push(curMass);
     used += n;
     last = k;
-    const good = ok && !loops(p, fed) && !momBad(person, tok, fed, text);
+    let good = ok && !loops(p, fed) && !momBad(person, tok, fed, text) && !blocked(tok, fed);
     if (good && person.acc[1] && hasMom(tok, fed)) moms.push([person.acc[0] / person.acc[1], k]);
-    if (good && person.acc[1]) means.set(k, person.acc[0] / person.acc[1]);
+    if (k === 0 && force.length) good = false;
+    if (good && person.acc[1]) {
+      means.set(k, person.acc[0] / person.acc[1]);
+      let w = 0;
+      for (const t of scored) w += person.wq[t];
+      sums.set(k, [person.acc[0] - w, scored]);
+    }
     win = person.candEnd(good);
     cands.push([fed, msgs, mass, ok]);
+  }
+  const top = [...means.keys()].sort((a, b) => means.get(b) - means.get(a)).slice(0, C.MMI_TOP);
+  const moved = top.length > 1;
+  if (moved) {
+    person.window(C.NULL_BASE);
+    person.rewind(C.NULL_BASE);
+    person.feed([C.BOS, C.YOU]);
+    const mi = new Map();
+    for (const c of top) {
+      const [s, toks] = sums.get(c);
+      person.rewind(C.NULL_BASE + 2);
+      let s0 = 0;
+      const prevs = [C.HIM, ...toks];
+      for (let i = 0; i < toks.length; i++) s0 += person.scoreAfter(prevs[i], toks[i])[3] - person.wq[toks[i]];
+      mi.set(c, (s - C.MMI_LAM * s0) / toks.length);
+    }
+    person.window(0);
+    win = top[0];
+    for (const c of top) if (mi.get(c) > mi.get(win)) win = c;
   }
   if (moms.length && means.has(win)) {
     let bm = moms[0];
@@ -433,6 +478,7 @@ function replyBest(person, tok, text, temp, cut, rng, emoji, nBest, budget) {
     if (bm[0] >= means.get(win) - C.MOM_SLACK) win = bm[1];
   }
   if (win !== last) { person.rewind(p0); person.feed([C.HIM, ...cands[win][0]]); }
+  else if (moved) { person.rewind(p0); person.skip([C.HIM, ...cands[win][0]]); }
   const [, msgsW, massW] = cands[win];
   person.said.push(msgsW.flat());
   msgsW.forEach((m, i) => { if (m.length) person.botMass.push(massW[i]); });
